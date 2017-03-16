@@ -87,15 +87,36 @@
 
 
 
-<meta name="description" content="胡编一通，乱写一气">
-<meta property="og:type" content="website">
-<meta property="og:title" content="扯皮屋">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="垃圾收集器与内存分配策略1.1 概述
+程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
+GC所关心的是堆和方法区的内存
+
+1.2 对象已死吗
+判断对象的“生死”1.2.1 引用计数算法
+给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="垃圾收集器与内存分配策略">
+<meta property="og:url" content="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/index.html">
 <meta property="og:site_name" content="扯皮屋">
-<meta property="og:description" content="胡编一通，乱写一气">
+<meta property="og:description" content="垃圾收集器与内存分配策略1.1 概述
+程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
+GC所关心的是堆和方法区的内存
+
+1.2 对象已死吗
+判断对象的“生死”1.2.1 引用计数算法
+给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/650075-8c5080659578032d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-03-16T18:07:45.476Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="扯皮屋">
-<meta name="twitter:description" content="胡编一通，乱写一气">
+<meta name="twitter:title" content="垃圾收集器与内存分配策略">
+<meta name="twitter:description" content="垃圾收集器与内存分配策略1.1 概述
+程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
+GC所关心的是堆和方法区的内存
+
+1.2 对象已死吗
+判断对象的“生死”1.2.1 引用计数算法
+给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/650075-8c5080659578032d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -123,13 +144,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/"/>
 
 
 
 
 
-  <title> 扯皮屋 </title>
+  <title> 垃圾收集器与内存分配策略 | 扯皮屋 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -154,9 +175,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -249,9 +268,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -281,10 +300,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/03/17/垃圾收集器与内存分配策略/" itemprop="url">
-                  垃圾收集器与内存分配策略
-                </a>
+                垃圾收集器与内存分配策略
               
             
           </h1>
@@ -335,9 +351,7 @@
       
 
       
-        
-          
-            <h1 id="垃圾收集器与内存分配策略"><a href="#垃圾收集器与内存分配策略" class="headerlink" title="垃圾收集器与内存分配策略"></a>垃圾收集器与内存分配策略</h1><h2 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a>1.1 概述</h2><ul>
+        <h1 id="垃圾收集器与内存分配策略"><a href="#垃圾收集器与内存分配策略" class="headerlink" title="垃圾收集器与内存分配策略"></a>垃圾收集器与内存分配策略</h1><h2 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a>1.1 概述</h2><ul>
 <li>程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题</li>
 <li>GC所关心的是堆和方法区的内存</li>
 </ul>
@@ -559,20 +573,27 @@
 <li>如果小于，或者HandlePromotionFailure设置不允许冒险，那这时也要改为进行一次Full GC。</li>
 </ol>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
@@ -580,371 +601,38 @@
       
 
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/17/Java内存区域与内存溢出异常/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
         
-        
-          <h1 class="post-title" itemprop="name headline">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/03/17/Java内存区域与内存溢出异常/" rel="next" title="Java内存区域与内存溢出异常">
+                <i class="fa fa-chevron-left"></i> Java内存区域与内存溢出异常
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2017/03/17/Java内存区域与内存溢出异常/" itemprop="url">
-                  Java内存区域与内存溢出异常
-                </a>
-              
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-17T02:06:43+08:00">
-                2017-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="Java内存区域与内存溢出异常"><a href="#Java内存区域与内存溢出异常" class="headerlink" title="Java内存区域与内存溢出异常"></a>Java内存区域与内存溢出异常</h1><h2 id="1-1-运行时数据区域"><a href="#1-1-运行时数据区域" class="headerlink" title="1.1 运行时数据区域"></a>1.1 运行时数据区域</h2><p><img src="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png" alt=""></p>
-<hr>
-<h3 id="1-1-1-程序计数器"><a href="#1-1-1-程序计数器" class="headerlink" title="1.1.1 程序计数器"></a>1.1.1 程序计数器</h3><ol>
-<li>程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。</li>
-<li>任意时刻，一个处理器都只会执行一条线程中的指令，即每条线程都需要一个独立的计数器，为了线程切换后能恢复到正确的执行位置，使得各线程之间互不影响，独立存储。</li>
-<li>若正在执行一个java方法，这个计数器记录的是正在执行的虚拟机字节指令的地址；若执行的是Native方法，则这个计数器值为空</li>
-</ol>
-<h3 id="1-1-2-Java虚拟机栈"><a href="#1-1-2-Java虚拟机栈" class="headerlink" title="1.1.2 Java虚拟机栈"></a>1.1.2 Java虚拟机栈</h3><ol>
-<li>同程序计数器一样是线程私有的，生命周期与线程相同</li>
-<li>描述的是java方法执行的内存模型，每个方法被执行时会创建一个栈帧，存储局部变量表，操作数栈，动态链接，方法出口等信息</li>
-<li>局部变量表存放了编译器可知的各种基本数据类型，对象引用和returnAddress类型，其中64位长度的long和double类型的数据会占用2个局部变量空间，其余类型只占用1个。</li>
-<li>局部变量表所需的内存空间在编译期间完成分配，在方法运行期间不会改变局部变量表的大小</li>
-<li>线程请求的栈深度大于虚拟机所允许的深度，抛出StackOverflowError异常；扩展时无法申请到足够的内存，抛出OutOfMemoryError异常</li>
-</ol>
-<h3 id="1-1-3-本地方法栈"><a href="#1-1-3-本地方法栈" class="headerlink" title="1.1.3 本地方法栈"></a>1.1.3 本地方法栈</h3><p>与虚拟机栈所发挥的作用非常相似，区别就是虚拟机栈为虚拟机执行java方法，而本地方法栈则为虚拟机使用到的Nativa方法服务，同虚拟机栈一样，也会抛出StackOverflowError异常和OutOfMemoryError异常</p>
-<h3 id="1-1-3-Java堆"><a href="#1-1-3-Java堆" class="headerlink" title="1.1.3 Java堆"></a>1.1.3 Java堆</h3><ol>
-<li>是Java虚拟机所管理的内存中最大的一块，被所有线程共享，存放绝大部分的对象实例</li>
-<li>Java堆是垃圾收集器管理的主要区域，故被称为“GC堆”</li>
-<li>Java堆可以处于物理上不连续的内存空间中，只要逻辑连续就可以，可以选择固定大小，可拓展</li>
-</ol>
-<h3 id="1-1-4-方法区（非堆）"><a href="#1-1-4-方法区（非堆）" class="headerlink" title="1.1.4 方法区（非堆）"></a>1.1.4 方法区（非堆）</h3><ol>
-<li>与Java堆一样，是各个线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据</li>
-<li>也称为“永久代”，HotSpot为了简便回收方法区的内存，即垃圾收集器可以像管理Java堆一样管理这部分内存</li>
-<li>不需要连续的内存，可以选择固定大小，可拓展，还可选择不实现垃圾收集</li>
-<li>这个区域回收目标主要是针对常量池的的回收和对类型的卸载，但是效果不佳。<h3 id="1-1-5-运行时常量池"><a href="#1-1-5-运行时常量池" class="headerlink" title="1.1.5 运行时常量池"></a>1.1.5 运行时常量池</h3></li>
-<li>是方法区的一部分，存放编译期生成的各种字面量和符号引用</li>
-<li>具备动态性，不要求常量一定只有编译期才能产生，运行期间也可能将新的常量放入池中，如String类的intern（）方法</li>
-</ol>
-<h3 id="1-1-6-直接内存"><a href="#1-1-6-直接内存" class="headerlink" title="1.1.6 直接内存"></a>1.1.6 直接内存</h3><ol>
-<li>不是虚拟机运行时数据区的一部分</li>
-<li>NIO中的一种基于通道与缓冲区的I/O方式，可以使用Native函数库直接分配堆外内存，通过一个存储在Java堆中的DirectByteBuffer对象作为这块内存的引用进行操作</li>
-</ol>
-<h2 id="1-2-HotSpot虚拟机对象探秘"><a href="#1-2-HotSpot虚拟机对象探秘" class="headerlink" title="1.2 HotSpot虚拟机对象探秘"></a>1.2 HotSpot虚拟机对象探秘</h2><h3 id="1-2-1-对象的创建"><a href="#1-2-1-对象的创建" class="headerlink" title="1.2.1 对象的创建"></a>1.2.1 对象的创建</h3><ol>
-<li>检查这个指令的参数是否能在常量池中定位到一个类的符号应用，并且检查这个符号引用代表的类是否已经被加载、解析和初始化过。若没有则先执行相应的类加载过程</li>
-<li>类加载检查通过后，为新生对象分配内存。对象所需内存的大小在类加载完成后便可确定</li>
-<li>若Java堆中内存是绝对规整的，所有用过的内存放在一边，没有用过的内存放在另一边，中间放着一个指针作为分界点的指示器，那所分配内存就仅仅是吧那个指针向空闲空间那边挪动一段与对象大小相等的距离，这种分配方式叫做“指针碰撞”</li>
-<li>若不是规整的，已使用和未使用的内存相互交错，故虚拟机就必须维护一个列表，记录上哪些内存块是可用的，在分配时从列表中找到一块足够大的空间划分给对象实例，并更新列表上的记录，这种方式叫做“空闲列表”</li>
-<li>Java堆是否规整是由所采用的垃圾收集器是否带有压缩整理功能决定的。使用Serial、ParNew等带Compact过程的收集器时，采用的是指针碰撞；使用CMS这种基于Mark-Sweep算法的收集器时，通常采用空闲列表</li>
-<li><p>解决频繁分配内存的问题：</p>
-<ol>
-<li>对分配内存空间的动作进行同步处理</li>
-<li>把内存分配的动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中先预先分配一小块内存，称为本地线程分配缓存（TLAB）</li>
-</ol>
-</li>
-<li><p>内存分配后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值</p>
-</li>
-<li>接下来虚拟机就要对对象进行必要的设置，例如这个对象是那个类的实例，如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息，存放在对象头之中</li>
-<li>执行<init>方法，把对象按照程序员的意愿进行初始化</init></li>
-</ol>
-<h3 id="1-2-2-对象的内存布局"><a href="#1-2-2-对象的内存布局" class="headerlink" title="1.2.2 对象的内存布局"></a>1.2.2 对象的内存布局</h3><ol>
-<li>对象在内存中存储的布局可以分为三块区域：对象头、实例数据、对齐填充</li>
-<li><p>对象头包括两部分信息：</p>
-<ol>
-<li>用于存储自身的运行时数据，哈希码、对象的GC分代年龄等信息，这部分数据长度在32位和64位虚拟机中分别为32bit和64bit</li>
-<li>类型指针，即对象指向他的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，并不是所有虚拟机实现都必须在对象数据上保留类型指针，即查找对象的元数据信息并不一定要经过对象本身</li>
-</ol>
-</li>
-<li><p>如果对象是Java数组，对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通Java对象得元数据信息确定Java对象的大小，但是从数组的元数据信息无法确定长度</p>
-</li>
-<li>实例数据：父类继承，子类定义的都需要记录<ol>
-<li>HotSpot虚拟机默认分配策略为longs/double,ints,shorts/chars,bytes/booleans,oops。即相同宽度的字段总是分配到一起</li>
-<li>若CompactFields参数值为true（默认为true），子类之中较窄的变量也可能会插入父类变量空隙中</li>
-</ol>
-</li>
-</ol>
-<p>5.对其填充并不是必然存在，仅仅起着占位符的作用，因为HotSpot的自动内存管理系统要求对象其实地址必须是8字节的倍数。</p>
-<h3 id="1-2-3-对象的访问定位"><a href="#1-2-3-对象的访问定位" class="headerlink" title="1.2.3 对象的访问定位"></a>1.2.3 对象的访问定位</h3><ol>
-<li>通过栈上的reference数据来操作对上的具体对象</li>
-<li>使用句柄：Java堆中会划分出一块内存来作为句柄池，reference存储的是对象的句柄地址，句柄中包含了对象实例数据（堆中的对象信息）与类型数据（方法区中的类信息）各自的具体地址信息</li>
-<li>直接指针访问：reference存储的直接就是对象地址，故堆对象中的布局中应该考虑如何放置访问类型数据的相关信息（方法区中的类信息）</li>
-<li>句柄访问好处是reference存储的是稳定的句柄地址，对象移动时只会改变句柄中的实例数据指针，reference本身不需改变，使用句柄访问的情况也十分常见。</li>
-<li>指针访问好处是速度更快，节省了一次指针定位的时间，HotSpot就是使用这种方式进行对象访问的</li>
-</ol>
-<h2 id="1-3-OutOfMemoryError异常"><a href="#1-3-OutOfMemoryError异常" class="headerlink" title="1.3 OutOfMemoryError异常"></a>1.3 OutOfMemoryError异常</h2><h2 id="1-3-1-Java堆异常"><a href="#1-3-1-Java堆异常" class="headerlink" title="1.3.1 Java堆异常"></a>1.3.1 Java堆异常</h2><ol>
-<li>实例对象数量到达最大堆的容量限制后就会产生内存溢出异常</li>
-<li>参数：堆的最小值-Xms  堆的最大值-Xmx  两者设置为一样即可避免堆自动扩展</li>
-<li>参数 -XX:+HeapDumpOnOutOfMemoryError可以让虚拟机在出现内存溢出异常时Dump出当前的内存堆转储快照</li>
-<li>解决：先通过内存映像分析工具堆Dump出来的堆转储快照进行分析。分析是内存泄漏还是内存溢出</li>
-</ol>
-<h2 id="1-3-2-虚拟机栈和本地方法栈溢出"><a href="#1-3-2-虚拟机栈和本地方法栈溢出" class="headerlink" title="1.3.2 虚拟机栈和本地方法栈溢出"></a>1.3.2 虚拟机栈和本地方法栈溢出</h2><ol>
-<li>HotSpot中并不区分虚拟机栈和本地方法栈，故-Xoss（设置本地方法栈大小）基本上无效</li>
-<li>栈容量由-Xss参数设定</li>
-<li>线程请求的栈深度大于虚拟机所允许的深度，抛出StackOverflowError异常；扩展时无法申请到足够的内存，抛出OutOfMemoryError异常</li>
-<li>单线程下 无论是栈帧太大还是虚拟机栈容量太小，当内存无法分配的时候，虚拟机抛出的都是StackOverflowError异常</li>
-<li>如果是建立过多线程导致内存溢出，在不能减少线程数或者更换64位虚拟机的情况下，就只能通过减少最大堆和减少栈容量来换取更多的线程</li>
-</ol>
-<h2 id="1-3-3-方法区和运行时常量池溢出"><a href="#1-3-3-方法区和运行时常量池溢出" class="headerlink" title="1.3.3 方法区和运行时常量池溢出"></a>1.3.3 方法区和运行时常量池溢出</h2><ol>
-<li><p>String.intern()是一个Native方法</p>
-<ol>
-<li>JDK1.6中，会将首次遇到的字符串实例复制到永久代中，返回永久代中这个字符串实例的引用</li>
-<li>JDK1.7不在复制实例，只是在常量池中记录<strong>首次出现</strong>的实例引用</li>
-</ol>
-</li>
-<li><p>-XX:PermSize -XX:MaxPermSize 限制方法区的大小</p>
-</li>
-</ol>
-<h2 id="1-3-4-本机直接内存溢出"><a href="#1-3-4-本机直接内存溢出" class="headerlink" title="1.3.4 本机直接内存溢出"></a>1.3.4 本机直接内存溢出</h2><ol>
-<li>可通过-XX:MaxDirectMemorySize指定，默认则与Java堆最大值一样</li>
-<li>虽然使用DirectByteBuffer分配内存也会抛出内存溢出异常，但是并没有向操作系统申请分配内存，而是通过计算得知内存无法分配，真正分配内存的方法时unsafe.allocateMemory()</li>
-<li>DirectMemory导致的内存溢出，特征是Heap Dump文件中不会看见明显的异常，Dump文件很小，程序中使用了NIO</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/16/hello-world/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-16T20:11:24+08:00">
-                2017-03-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
+  </div>
 
           
           </div>
@@ -952,6 +640,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -971,8 +663,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/logan.jpg"
@@ -1036,6 +737,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾收集器与内存分配策略"><span class="nav-number">1.</span> <span class="nav-text">垃圾收集器与内存分配策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-概述"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-对象已死吗"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 对象已死吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-引用计数算法"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 引用计数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-可达性算法"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 可达性算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-再谈引用"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3 再谈引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-4-生存or死亡"><span class="nav-number">1.2.4.</span> <span class="nav-text">1.2.4 生存or死亡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-5-回收方法区"><span class="nav-number">1.2.5.</span> <span class="nav-text">1.2.5 回收方法区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-垃圾收集算法"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-标记-清除算法"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1 标记-清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-复制算法"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2 复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-标记-整理算法"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3 标记-整理算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-4-分代收集算法"><span class="nav-number">1.3.4.</span> <span class="nav-text">1.3.4 分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-HotSpot算法"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 HotSpot算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-1-枚举根节点"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.4.1 枚举根节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-2-安全点"><span class="nav-number">1.4.2.</span> <span class="nav-text">1.4.2 安全点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-2-安全区域"><span class="nav-number">1.4.3.</span> <span class="nav-text">1.4.2 安全区域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-垃圾收集器"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-1-Serial收集器"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.5.1 Serial收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-2-ParNew收集器"><span class="nav-number">1.5.2.</span> <span class="nav-text">1.5.2 ParNew收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-3-Parallel-Scavenge收集器"><span class="nav-number">1.5.3.</span> <span class="nav-text">1.5.3 Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-4-Serial-Old收集器"><span class="nav-number">1.5.4.</span> <span class="nav-text">1.5.4 Serial Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-5-Parallel-Old收集器"><span class="nav-number">1.5.5.</span> <span class="nav-text">1.5.5 Parallel Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-6-CMS收集器"><span class="nav-number">1.5.6.</span> <span class="nav-text">1.5.6 CMS收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-7-G1收集器"><span class="nav-number">1.5.7.</span> <span class="nav-text">1.5.7 G1收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-8-理解GC日志"><span class="nav-number">1.5.8.</span> <span class="nav-text">1.5.8 理解GC日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-9-垃圾收集器参数总结"><span class="nav-number">1.5.9.</span> <span class="nav-text">1.5.9 垃圾收集器参数总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-内存分配与回收策略"><span class="nav-number">1.6.</span> <span class="nav-text">1.6 内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-1-对象优先在Eden分配"><span class="nav-number">1.6.1.</span> <span class="nav-text">1.6.1 对象优先在Eden分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-2-大对象直接进入老年代"><span class="nav-number">1.6.2.</span> <span class="nav-text">1.6.2 大对象直接进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-3-长期存活的对象将进入老年代"><span class="nav-number">1.6.3.</span> <span class="nav-text">1.6.3 长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-4-动态对象年龄的判定"><span class="nav-number">1.6.4.</span> <span class="nav-text">1.6.4 动态对象年龄的判定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-5-空间分配担保"><span class="nav-number">1.6.5.</span> <span class="nav-text">1.6.5 空间分配担保</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1148,6 +865,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
 
   
 
