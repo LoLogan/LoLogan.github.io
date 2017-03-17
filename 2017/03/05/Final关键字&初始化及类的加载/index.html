@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="JAVA," />
 
 
 
@@ -87,15 +87,37 @@
 
 
 
-<meta name="description" content="胡编一通，乱写一气">
-<meta property="og:type" content="website">
-<meta property="og:title" content="扯皮屋">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="Final关键字&amp;amp;初始化及类的加载
+无法改变
+1.final数据
+对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
+可以在编译时执行计算式，减轻了一些运行时的负担
+在对此类常量进行定义时，必须对其进行赋值
+一个static又是final的域只占据一段不能改变的存储空间
+static和fi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存区域与内存溢出异常">
+<meta property="og:url" content="http://yoursite.com/2017/03/05/Final关键字&初始化及类的加载/index.html">
 <meta property="og:site_name" content="扯皮屋">
-<meta property="og:description" content="胡编一通，乱写一气">
+<meta property="og:description" content="Final关键字&amp;amp;初始化及类的加载
+无法改变
+1.final数据
+对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
+可以在编译时执行计算式，减轻了一些运行时的负担
+在对此类常量进行定义时，必须对其进行赋值
+一个static又是final的域只占据一段不能改变的存储空间
+static和fi">
+<meta property="og:updated_time" content="2017-03-17T16:47:56.988Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="扯皮屋">
-<meta name="twitter:description" content="胡编一通，乱写一气">
+<meta name="twitter:title" content="Java内存区域与内存溢出异常">
+<meta name="twitter:description" content="Final关键字&amp;amp;初始化及类的加载
+无法改变
+1.final数据
+对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
+可以在编译时执行计算式，减轻了一些运行时的负担
+在对此类常量进行定义时，必须对其进行赋值
+一个static又是final的域只占据一段不能改变的存储空间
+static和fi">
 
 
 
@@ -123,13 +145,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/05/Final关键字&初始化及类的加载/"/>
 
 
 
 
 
-  <title> 扯皮屋 </title>
+  <title> Java内存区域与内存溢出异常 | 扯皮屋 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -154,9 +176,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -249,9 +269,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -281,10 +301,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/03/05/Final关键字&初始化及类的加载/" itemprop="url">
-                  Java内存区域与内存溢出异常
-                </a>
+                Java内存区域与内存溢出异常
               
             
           </h1>
@@ -335,456 +352,102 @@
       
 
       
+        <h1 id="Final关键字-amp-初始化及类的加载"><a href="#Final关键字-amp-初始化及类的加载" class="headerlink" title="Final关键字&amp;初始化及类的加载"></a>Final关键字&amp;初始化及类的加载</h1><blockquote>
+<p>无法改变</p>
+<h2 id="1-final数据"><a href="#1-final数据" class="headerlink" title="1.final数据"></a>1.final数据</h2><ol>
+<li>对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象</li>
+<li>可以在编译时执行计算式，减轻了一些运行时的负担</li>
+<li>在对此类常量进行定义时，必须对其进行赋值</li>
+<li>一个static又是final的域只占据一段不能改变的存储空间</li>
+<li>static和final修饰的用大写表示，下划线分隔各个单词</li>
+<li>不能因为数据是final就认为在编译时可以知道他的值（可以在运行时生成）</li>
+<li>编译器都确保空白final在使用前必须被初始化，必须在域的定义出或在每个构造器中用表达式对final进行赋值。</li>
+</ol>
+</blockquote>
+<h2 id="2-final方法"><a href="#2-final方法" class="headerlink" title="2.final方法"></a>2.final方法</h2><ol>
+<li>把方法锁定，以防止任何继承类修改他的含义</li>
+<li>提高效率，能使方法的所有调用转为内嵌调用</li>
+</ol>
+<h2 id="3-final类"><a href="#3-final类" class="headerlink" title="3.final类"></a>3.final类</h2><ol>
+<li>将某个类的整体定义为final时，表明了不能继承该类，其中的方法也都隐式指定为final的</li>
+</ol>
+<h2 id="4-初始化及类的加载"><a href="#4-初始化及类的加载" class="headerlink" title="4.初始化及类的加载"></a>4.初始化及类的加载</h2><blockquote>
+<p>类的代码在初次使用时加载（创建对象以及访问static域）</p>
+</blockquote>
+<ol>
+<li>根基类的static初始化，然后是子类，以此类推。因为子类中的static初始化可能会依赖于父类的成员能否正确初始化</li>
+<li>类加载完毕后，对象中的基本类型都会被设为默认值，对象引用设为null</li>
+<li>调用基类的构造器，然后是子类的构造器</li>
+<li>构造器完成之后，实例变量按次序被初始化</li>
+<li>其余部分被执行</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
         
-          
-          Final关键字&amp;初始化及类的加载
-无法改变
-1.final数据
-对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
-可以在编译时执行计算式，减轻了一些运行时的负担
-在对此类常量进行定义时，
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/05/Final关键字&初始化及类的加载/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
-      
-    </div>
-
-    <div>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/05/垃圾收集器与内存分配策略/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/05/垃圾收集器与内存分配策略/" itemprop="url">
-                  垃圾收集器与内存分配策略
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-05T00:00:00+08:00">
-                2017-03-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/JAVA/" rel="tag"># JAVA</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
         
-          
-          垃圾收集器与内存分配策略1.1 概述
-程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
-GC所关心的是堆和方法区的内存
+      
 
-1.2 对象已死吗
-判断对象的“生死”1.2.1 引用计数算法
-给对象中添加一个引用计数器，每当有一
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/05/垃圾收集器与内存分配策略/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/05/垃圾收集器与内存分配策略/" rel="next" title="垃圾收集器与内存分配策略">
+                <i class="fa fa-chevron-left"></i> 垃圾收集器与内存分配策略
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
+          <span class="post-nav-divider"></span>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/Java内存区域与内存溢出异常/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+          <div class="post-nav-prev post-nav-item">
             
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/02/Java内存区域与内存溢出异常/" itemprop="url">
-                  Java内存区域与内存溢出异常
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">
-                2017-03-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-          Java内存区域与内存溢出异常1.1 运行时数据区域
-
-1.1.1 程序计数器
-程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。
-任
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/02/Java内存区域与内存溢出异常/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/类文件结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/02/类文件结构/" itemprop="url">
-                  类文件结构
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">
-                2017-03-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          类文件结构
-代码编译的结果从本地机器码转变为字节码
-
-1. Class类文件的结构
-Class文件是一组以8位字节为基础单位的二进制流。
-
-
-Class文件格式只有两种数据类型：无符号数和表。
-无符号数属于基本的数据类型，以u1、u2、u4、u8代表1/2/4/8字节的无符号数，可以用于描述数字，索
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/02/类文件结构/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+    <div class="post-spread">
       
     </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
+  </div>
 
           
           </div>
@@ -792,6 +455,10 @@ Class文件格式只有两种数据类型：无符号数和表。
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -811,8 +478,17 @@ Class文件格式只有两种数据类型：无符号数和表。
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/logan.jpg"
@@ -885,6 +561,22 @@ Class文件格式只有两种数据类型：无符号数和表。
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Final关键字-amp-初始化及类的加载"><span class="nav-number">1.</span> <span class="nav-text">Final关键字&初始化及类的加载</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-final数据"><span class="nav-number">1.1.</span> <span class="nav-text">1.final数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-final方法"><span class="nav-number">1.2.</span> <span class="nav-text">2.final方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-final类"><span class="nav-number">1.3.</span> <span class="nav-text">3.final类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-初始化及类的加载"><span class="nav-number">1.4.</span> <span class="nav-text">4.初始化及类的加载</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -986,6 +678,10 @@ Class文件格式只有两种数据类型：无符号数和表。
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
 
   
 
