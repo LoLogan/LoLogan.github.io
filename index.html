@@ -203,7 +203,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
+          <a href="/about.md" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -250,568 +250,6 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/17/垃圾收集器与内存分配策略/" itemprop="url">
-                  垃圾收集器与内存分配策略
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-17T02:07:45+08:00">
-                2017-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="垃圾收集器与内存分配策略"><a href="#垃圾收集器与内存分配策略" class="headerlink" title="垃圾收集器与内存分配策略"></a>垃圾收集器与内存分配策略</h1><h2 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a>1.1 概述</h2><ul>
-<li>程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题</li>
-<li>GC所关心的是堆和方法区的内存</li>
-</ul>
-<h2 id="1-2-对象已死吗"><a href="#1-2-对象已死吗" class="headerlink" title="1.2 对象已死吗"></a>1.2 对象已死吗</h2><ul>
-<li>判断对象的“生死”<h3 id="1-2-1-引用计数算法"><a href="#1-2-1-引用计数算法" class="headerlink" title="1.2.1 引用计数算法"></a>1.2.1 引用计数算法</h3><blockquote>
-<p>给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使用的</p>
-</blockquote>
-</li>
-</ul>
-<ol>
-<li>优点：实现简单，判定效率高</li>
-<li><p>缺点：难以解决对象之间相互循环引用的问题</p>
-<pre><code>public class ReferenceCountingGC{
-    public Object instance = null;
-    private static final int _1MB = 1024*1024;
-
-    private byte[] bigSize = new byte[2 * _1MB];
-
-    public static void testGC(){
-        ReferenceCountingGC objA = new ReferenceCountingGC();
-        ReferenceCountingGC objB = new ReferenceCountingGC();
-        objA.instance = objB;
-        objB.instance = objA;
-
-        objA = null;
-        objB = null;
-
-        //执行GC
-        System.gc();
-    }
-}
-</code></pre></li>
-</ol>
-<h3 id="1-2-2-可达性算法"><a href="#1-2-2-可达性算法" class="headerlink" title="1.2.2 可达性算法"></a>1.2.2 可达性算法</h3><blockquote>
-<p>主流商用程序语言（Java、C#）的主要实现中都是通过可达性分析来判定对象是否存活。基本思路是通过一系列称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链相连时，则证明此对象不可用</p>
-</blockquote>
-<ul>
-<li>可作为GC Roots的对象包括下面几种<ol>
-<li>虚拟机栈（栈帧中的本地变量表）中引用的对象</li>
-<li>方法区中类静态属性引用的对象</li>
-<li>方法区中常量引用的对象</li>
-<li>本地方法栈中JNI（即一般说的Native方法）引用的对象</li>
-</ol>
-</li>
-</ul>
-<h3 id="1-2-3-再谈引用"><a href="#1-2-3-再谈引用" class="headerlink" title="1.2.3 再谈引用"></a>1.2.3 再谈引用</h3><ol>
-<li>强引用：只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象，类似“Object obj = new Object()”</li>
-<li>软引用：描述一些还有用但并非必需的对象。对于软引用关联的对象，在系统将要发生内存溢出异常之前，将会把这些对象列进回收范围之中进行第二次回收。如果这次回收还没有足够的内存，才会抛出内存溢出异常</li>
-<li>弱引用：也是描述非必需对象，被弱引用关联的对象只能生存到下一次垃圾收集发生之前。当垃圾收集器工作时，无论当前内存是否足够，都会回收掉只被弱引用关联的对象</li>
-<li>虚引用（幽灵引用，幻影引用）：最弱的一种引用关系。一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法用过虚引用来取得一个对象实例。为一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时受到一个系统通知</li>
-</ol>
-<h3 id="1-2-4-生存or死亡"><a href="#1-2-4-生存or死亡" class="headerlink" title="1.2.4 生存or死亡"></a>1.2.4 生存or死亡</h3><ol>
-<li>如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选</li>
-<li>筛选的条件是此对象是否有必要执行finalize()方法。当对象没有覆盖finalize()方法，或者finalize()方法已经被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”</li>
-<li>若有必要执行finalize()方法，那么这个对象会被放置在一个叫做F-Queue的队列之中</li>
-<li>并在稍后由一个虚拟机自动建立的、低优先级的Finalizer线程去执行它</li>
-<li>“执行”是指虚拟机会触发这个方法，但并不承诺会等待它运行结束，因为一个对象如果在finalize()中执行缓慢或者死循环，将可能导致F-Queue队列中其他对象永久处于等待，甚至导致内存回收系统奔溃</li>
-<li>finalize()方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-Queue中的对象进行第二次小规模的标记，如果对象要在finalize()中成功拯救自己——只要重新与引用链上的任何一个对象建立关联即可。</li>
-<li>任何一个对象的finalize()方法都只会被系统自动调用一次</li>
-</ol>
-<h3 id="1-2-5-回收方法区"><a href="#1-2-5-回收方法区" class="headerlink" title="1.2.5 回收方法区"></a>1.2.5 回收方法区</h3><ol>
-<li>废弃常量：如果某常量已经进入了常量池，但是当前系统没有任何一个String对象引用这个常量，将会被清理出常量池</li>
-<li><p>无用的类：需满足三个条件才算”无用的类”</p>
-<ol>
-<li>该类所有的实例都已经被回收，也就是Java堆中不存在该类的任何实例</li>
-<li>加载该类的ClassLoader已经被回收</li>
-<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法再任何地方通过反射访问该类的方法</li>
-</ol>
-</li>
-<li><p>是否对类进行回收，HotSpot虚拟机提供了 -Xnoclassgc参数进行控制，-verbose:class和-XX:+TraceClassLoading可以在Product版的虚拟机中使用，-XX:+TraceClassUnLoading参数需要FastDebug版的虚拟机支持</p>
-</li>
-</ol>
-<h2 id="1-3-垃圾收集算法"><a href="#1-3-垃圾收集算法" class="headerlink" title="1.3 垃圾收集算法"></a>1.3 垃圾收集算法</h2><h3 id="1-3-1-标记-清除算法"><a href="#1-3-1-标记-清除算法" class="headerlink" title="1.3.1 标记-清除算法"></a>1.3.1 标记-清除算法</h3><ol>
-<li>首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象</li>
-<li>不足：效率不高；标记清除之后会产生大量不连续的内存碎片，导致以后需要分配较大对象时，无法找到足够大的连续内存而不得不提前触发另一次垃圾收集动作</li>
-</ol>
-<h3 id="1-3-2-复制算法"><a href="#1-3-2-复制算法" class="headerlink" title="1.3.2 复制算法"></a>1.3.2 复制算法</h3><ol>
-<li>将可用内存按容量划分为大小相等的两块，每次只使用其中的一块</li>
-<li>当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，再把已经使用过的内存空间一次清理掉</li>
-<li>不足：代价是将内存缩小为原来的一半</li>
-<li>优点：实现简单，运行高效</li>
-<li>可将内存分为一块较大的Eden空间和两块较小的Survivor空间（8:1:1）</li>
-</ol>
-<h3 id="1-3-3-标记-整理算法"><a href="#1-3-3-标记-整理算法" class="headerlink" title="1.3.3 标记-整理算法"></a>1.3.3 标记-整理算法</h3><ol>
-<li>标记与”标记-清除”算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象向一端移动，然后直接清理掉端边界以外的内存</li>
-</ol>
-<h3 id="1-3-4-分代收集算法"><a href="#1-3-4-分代收集算法" class="headerlink" title="1.3.4 分代收集算法"></a>1.3.4 分代收集算法</h3><ol>
-<li>新生代使用复制算法</li>
-<li>老年代使用标记-整理算法</li>
-</ol>
-<h2 id="1-4-HotSpot算法"><a href="#1-4-HotSpot算法" class="headerlink" title="1.4 HotSpot算法"></a>1.4 HotSpot算法</h2><h3 id="1-4-1-枚举根节点"><a href="#1-4-1-枚举根节点" class="headerlink" title="1.4.1 枚举根节点"></a>1.4.1 枚举根节点</h3><ul>
-<li>在执行可达性分析的时候，我们要「Stop The World」，也就是把全部的线程都阻塞，这样才能准则他分析出对象的引用关系。 虚拟机通过<strong>OopMap</strong>的数据结构来直接得知引用的位置。</li>
-<li>OopMap：一组特定的数据结构，记录数据引用（用来判断哪些对象是存活的）</li>
-</ul>
-<h3 id="1-4-2-安全点"><a href="#1-4-2-安全点" class="headerlink" title="1.4.2 安全点"></a>1.4.2 安全点</h3><blockquote>
-<p>如果为没有一条指令生成对应的OopMap，则需要大量的额外空间，故只在安全点处生成对应的OopMap</p>
-</blockquote>
-<ol>
-<li>安全点的选定一般是以程序“是否具有让程序长时间执行的特征”为标准进行选定的，所以一般选定为方法调用、循环跳转、异常跳转处为安全点</li>
-<li>当开始GC时，线程都跑到最近的安全点（Safepoint）上停下来。 这里分为抢先式中断和主动式中断。</li>
-<li>抢先式中断是在 GC 发生时，首先把所有线程中断，如果发现线程中断的地方不在安全点上，就恢复线程，让它跑到安全点上。</li>
-<li>主动式中断不直接对线程操作，在安全点上设置一个标志，当线程发现标志为真的时候自己中断。</li>
-</ol>
-<h3 id="1-4-2-安全区域"><a href="#1-4-2-安全区域" class="headerlink" title="1.4.2 安全区域"></a>1.4.2 安全区域</h3><blockquote>
-<p>一段代码中引用关系不会变化，这一段代码称为安全区域（扩展的安全点）</p>
-</blockquote>
-<ul>
-<li>当有些线程被阻塞的时候，便不能响应 JVM 的中断请求。 安全区域是指在一段代码片段之中，引用关系不会发生变化。 当线程进入Safe Region时，标识自己进入了，然后发起 GC 时就不用管标识为Safe Region的线程了。线程要离开安全区域时，首先检查是否完成 GC，除非完成才能继续执行。</li>
-</ul>
-<h2 id="1-5-垃圾收集器"><a href="#1-5-垃圾收集器" class="headerlink" title="1.5 垃圾收集器"></a>1.5 垃圾收集器</h2><p><img src="http://upload-images.jianshu.io/upload_images/650075-8c5080659578032d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-<h3 id="1-5-1-Serial收集器"><a href="#1-5-1-Serial收集器" class="headerlink" title="1.5.1 Serial收集器"></a>1.5.1 Serial收集器</h3><ol>
-<li>Serial收集器是最基本的收集器，是一个单线程收集器。它在收集时，必须暂停其他所有工作线程，直到收集结束。 </li>
-<li>对于运行在Client模式下的虚拟机来说是一个很好的选择。</li>
-<li>优点：简单高效。 它没有线程交互的开销，获得最高的单线程收集效率<h3 id="1-5-2-ParNew收集器"><a href="#1-5-2-ParNew收集器" class="headerlink" title="1.5.2 ParNew收集器"></a>1.5.2 ParNew收集器</h3>ParNew收集器就是Serial收集器的多线程版本。它是在 Server 模式下运行的虚拟机中首选的新生代收集器。因为除了Serial收集器之外，只有它能和CMS收集器配合工作。<h3 id="1-5-3-Parallel-Scavenge收集器"><a href="#1-5-3-Parallel-Scavenge收集器" class="headerlink" title="1.5.3 Parallel Scavenge收集器"></a>1.5.3 Parallel Scavenge收集器</h3></li>
-<li>Parallel Scavenge收集器是一个新生代收集器，使用复制算法、并行多线程。 他和ParNew收集器不一样的地方是他的关注点和其他收集器不同。Parallel Scavenge收集器的目的是达到一个可控制的吞吐量</li>
-<li>吞吐量 = 运行用户代码时间/（运行用户代码时间+垃圾收集时间）</li>
-<li>-XX:MaxGCPauseMillis设置停顿时间 -XX:GCTimeRatio设置吞吐量大小（吞吐量的倒数）</li>
-<li>GC自适应的调节策略（GC Ergonomics）：Parallel Scavenge收集器有一个参数-XX:+UseAdaptiveSizePolicy。当这个参数打开之后，就不需要手工指定新生代的大小、Eden与Survivor区的比例、晋升老年代对象年龄等细节参数了，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量</li>
-</ol>
-<h3 id="1-5-4-Serial-Old收集器"><a href="#1-5-4-Serial-Old收集器" class="headerlink" title="1.5.4 Serial Old收集器"></a>1.5.4 Serial Old收集器</h3><ol>
-<li>Serial Old是Serial收集器的老年代版本，它同样是一个单线程收集器，使用标记－整理算法。</li>
-<li>Serial Old收集器的主要意义也是在于给Client模式下的虚拟机使用。</li>
-<li>如果在Server模式下，那么它主要还有两大用途：一种用途是在JDK 1.5以及之前的版本中与Parallel Scavenge收集器搭配使用，另一种用途就是作为CMS收集器的后备预案，在并发收集发生Concurrent Mode Failure时使用。</li>
-</ol>
-<h3 id="1-5-5-Parallel-Old收集器"><a href="#1-5-5-Parallel-Old收集器" class="headerlink" title="1.5.5 Parallel Old收集器"></a>1.5.5 Parallel Old收集器</h3><ol>
-<li>Parallel Old是Parallel Scavenge收集器的老年代版本，使用多线程和“标记－整理”算法。</li>
-<li>在注重吞吐量以及CPU资源敏感的场合，都可以优先考虑Parallel Scavenge加Parallel Old收集器。</li>
-</ol>
-<h3 id="1-5-6-CMS收集器"><a href="#1-5-6-CMS收集器" class="headerlink" title="1.5.6 CMS收集器"></a>1.5.6 CMS收集器</h3><blockquote>
-<p>CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的收集器。目前很大一部分的Java应用集中在互联网站或者B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，以给用户带来较好的体验。CMS收集器就非常符合这类应用的需求。</p>
-</blockquote>
-<ol>
-<li><p>CMS收集器是基于“标记—清除”算法实现的，它的运作过程相对于前面几种收集器来说更复杂一些，整个过程分为4个步骤：</p>
-<ol>
-<li>初始标记:初始标记仅仅只是标记一下GC Roots能直接关联到的对象，速度很快，需要“Stop The World”。</li>
-<li>并发标记:并发标记阶段就是进行GC Roots Tracing的过程.</li>
-<li>重新标记:重新标记阶段是为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短，仍然需要“Stop The World”。</li>
-<li>并发清除：并发清除阶段会清除对象。</li>
-</ol>
-</li>
-<li><p>由于整个过程中耗时最长的<strong>并发标记和并发清除</strong>过程收集器线程都可以与用户线程一起工作，所以，从总体上来说，CMS收集器的内存回收过程是与用户线程一起并发执行的。</p>
-</li>
-<li>优点：并发收集，低停顿</li>
-<li>缺点：<ol>
-<li><strong>CMS收集器对CPU资源非常敏感</strong></li>
-<li><strong>CMS收集器无法处理浮动垃圾</strong>：于CMS并发清理阶段用户线程还在运行着，伴随程序运行自然就还会有新的垃圾不断产生，这一部分垃圾出现在标记过程之后，CMS无法在当次收集中处理掉它们，只好留待下一次GC时再清理掉。这一部分垃圾就称为“浮动垃圾”。也是由于在垃圾收集阶段用户线程还需要运行，那也就还需要预留有足够的内存空间给用户线程使用，因此CMS收集器不能像其他收集器那样等到老年代几乎完全被填满了再进行收集，需要预留一部分空间提供并发收集时的程序运作使用。要是CMS运行期间预留的内存无法满足程序需要，就会出现一次“Concurrent Mode Failure”失败，这时虚拟机将启动后备预案：临时启用Serial Old收集器来重新进行老年代的垃圾收集，这样停顿时间就很长了。</li>
-<li><strong>CMS收集器会产生大量空间碎片</strong>：CMS是一款基于“标记—清除”算法实现的收集器，这意味着收集结束时会有大量空间碎片产生。空间碎片过多时，将会给大对象分配带来很大麻烦，往往会出现老年代还有很大空间剩余，但是无法找到足够大的连续空间来分配当前对象，不得不提前触发一次Full GC。</li>
-</ol>
-</li>
-</ol>
-<h3 id="1-5-7-G1收集器"><a href="#1-5-7-G1收集器" class="headerlink" title="1.5.7 G1收集器"></a>1.5.7 G1收集器</h3><blockquote>
-<p>G1（Garbage-First）是一款面向服务端应用的垃圾收集器。HotSpot开发团队赋予它的使命是未来可以替换掉JDK 1.5中发布的CMS收集器。</p>
-</blockquote>
-<ol>
-<li><p>特点：</p>
-<ol>
-<li>并行与并发：G1能充分利用多CPU、多核环境下的硬件优势，使用多个CPU来缩短Stop-The-World停顿的时间，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行。</li>
-<li>分代收集：与其他收集器一样，分代概念在G1中依然得以保留。虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间、熬过多次GC的旧对象以获取更好的收集效果。</li>
-<li>空间整合：与CMS的“标记—清理”算法不同，G1从整体来看是基于“标记—整理”算法实现的收集器，从局部（两个Region之间）上来看是基于“复制”算法实现的，但无论如何，这两种算法都意味着G1运作期间不会产生内存空间碎片，收集后能提供规整的可用内存。这种特性有利于程序长时间运行，分配大对象时不会因为无法找到连续内存空间而提前触发下一次GC。</li>
-<li>可预测的停顿：这是G1相对于CMS的另一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒。</li>
-</ol>
-</li>
-<li><p>1之前的其他收集器进行收集的范围都是整个新生代或者老年代，而G1不再是这样。使用G1收集器时，Java堆的内存布局就与其他收集器有很大差别，它将整个Java堆划分为多个大小相等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔离的了，它们都是一部分Region（不需要连续）的集合。</p>
-</li>
-<li>G1收集器之所以能建立可预测的停顿时间模型，是因为它可以有计划地避免在整个Java堆中进行全区域的垃圾收集。G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region（这也就是Garbage-First名称的来由）。这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限的时间内可以获取尽可能高的收集效率。</li>
-<li>Region之间的对象引用以及其他收集器中的新生代与老年代之间的对象引用，虚拟机都是使用Remembered Set来避免全堆扫描的。G1中每个堆都有一个与之对应的Remember Set，虚拟机发现程序在对Reference类型的数据进行写操作时，会产生一个write Barrier暂时中断写操作，检查Reference引用的对象是否处于不同的Region之中，若是则用过CarTable把相关引用信息记录到被引用对象所属的Region的Remember Set中</li>
-<li>执行过程：<ol>
-<li>初始标记：初始标记阶段仅仅只是标记一下GC Roots能直接关联到的对象，并且修改TAMS（Next Top at Mark Start）的值，让下一阶段用户程序并发运行时，能在正确可用的Region中创建新对象，这阶段需要停顿线程，但耗时很短。</li>
-<li>并发标记：并发标记阶段是从GC Root开始对堆中对象进行可达性分析，找出存活的对象，这阶段耗时较长，但可与用户程序并发执行。</li>
-<li>最终标记：最终标记阶段是为了修正在并发标记期间因用户程序继续运作而导致标记产生变动的那一部分标记记录，虚拟机将这段时间对象变化记录在线程Remembered Set Logs里面，最终标记阶段需要把Remembered Set Logs的数据合并到Remembered Set中，这阶段需要停顿线程，但是可并行执行。</li>
-<li>筛选回收：筛选回收阶段首先对各个Region的回收价值和成本进行排序，根据用户所期望的GC停顿时间来制定回收计划，这个阶段其实也可以做到与用户程序一起并发执行，但是因为只回收一部分Region，时间是用户可控制的，而且停顿用户线程将大幅提高收集效率。</li>
-</ol>
-</li>
-</ol>
-<h3 id="1-5-8-理解GC日志"><a href="#1-5-8-理解GC日志" class="headerlink" title="1.5.8 理解GC日志"></a>1.5.8 理解GC日志</h3><pre><code>33.125: [GC [DefNew: 3324K-&gt;152K(3712K), 0.0025925 secs] 3324K-&gt;152K(11904K), 0.0031680 secs] 
-100.667: [Full GC [Tenured: 0K-&gt;210K(10240K), 0.0149142 secs] 4603K-&gt;210K(19456K), [Perm : 2999K-&gt;2999K(21248K)], 0.0150007 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]    
-</code></pre><ul>
-<li>33.125代表了GC发生的时间，数字的含义是从Java虚拟机启动以来经过的秒数</li>
-<li>GC日志开头的“［GC”和“［Full GC”说明了这次垃圾收集的停顿类型，而不是用来区分新生代GC还是老年代GC的。如果有“Full”，说明这次GC是发生了Stop-The-World的。</li>
-<li>接下来的“［DefNew”、“［Tenured”、“［Perm”表示GC发生的区域，这里显示的区域名称与使用的GC收集器是密切相关的，例如上面样例所使用的Serial收集器中的新生代名为“Default New Generation”，所以显示的是“［DefNew”。如果是ParNew收集器，新生代名称就会变为“［ParNew”，意为“Parallel New Generation”。如果采用Parallel Scavenge收集器，那它配套的新生代称为“PSYoungGen”，老年代和永久代同理，名称也是由收集器决定的。</li>
-<li>后面方括号内部的“3324K-&gt;152K(3712K)”含义是“GC前该内存区域已使用容量-&gt; GC后该内存区域已使用容量 (该内存区域总容量)”。而在方括号之外的“3324K-&gt;152K(11904K)”表示“GC前Java堆已使用容量 -&gt; GC后Java堆已使用容量 (Java堆总容量)”。</li>
-<li>再往后，“0.0025925 secs”表示该内存区域GC所占用的时间，单位是秒。</li>
-</ul>
-<h3 id="1-5-9-垃圾收集器参数总结"><a href="#1-5-9-垃圾收集器参数总结" class="headerlink" title="1.5.9 垃圾收集器参数总结"></a>1.5.9 垃圾收集器参数总结</h3><ul>
-<li>-XX:+UseSerialGC：Jvm运行在Client模式下的默认值，打开此开关后，使用Serial + Serial Old的收集器组合进行内存回收</li>
-<li>-XX:+UseParNewGC：打开此开关后，使用ParNew + Serial Old的收集器进行垃圾回收</li>
-<li>-XX:+UseConcMarkSweepGC：使用ParNew + CMS +  Serial Old的收集器组合进行内存回收，Serial Old作为CMS出现“Concurrent Mode Failure”失败后的后备收集器使用。</li>
-<li>-XX:+UseParallelGC：Jvm运行在Server模式下的默认值，打开此开关后，使用Parallel Scavenge +  Serial Old的收集器组合进行回收</li>
-<li>-XX:+UseParallelOldGC：使用Parallel Scavenge +  Parallel Old的收集器组合进行回收</li>
-<li>-XX:SurvivorRatio：新生代中Eden区域与Survivor区域的容量比值，默认为8，代表Eden:Subrvivor = 8:1</li>
-<li>-XX:PretenureSizeThreshold：直接晋升到老年代对象的大小，设置这个参数后，大于这个参数的对象将直接在老年代分配</li>
-<li>-XX:MaxTenuringThreshold    晋升到老年代的对象年龄，每次Minor GC之后，年龄就加1，当超过这个参数的值时进入老年代</li>
-<li>-XX:UseAdaptiveSizePolicy    动态调整java堆中各个区域的大小以及进入老年代的年龄</li>
-<li>-XX:+HandlePromotionFailure    是否允许新生代收集担保，进行一次minor gc后, 另一块Survivor空间不足时，将直接会在老年代中保留</li>
-<li>-XX:ParallelGCThreads    设置并行GC进行内存回收的线程数</li>
-<li>-XX:GCTimeRatio    GC时间占总时间的比列，默认值为99，即允许1%的GC时间，仅在使用Parallel Scavenge 收集器时有效</li>
-<li>-XX:MaxGCPauseMillis    设置GC的最大停顿时间，在Parallel Scavenge 收集器下有效</li>
-<li>-XX:CMSInitiatingOccupancyFraction    设置CMS收集器在老年代空间被使用多少后出发垃圾收集，默认值为68%，仅在CMS收集器时有效，-XX:CMSInitiatingOccupancyFraction=70</li>
-<li>-XX:+UseCMSCompactAtFullCollection    由于CMS收集器会产生碎片，此参数设置在垃圾收集器后是否需要一次内存碎片整理过程，仅在CMS收集器时有效</li>
-</ul>
-<h2 id="1-6-内存分配与回收策略"><a href="#1-6-内存分配与回收策略" class="headerlink" title="1.6 内存分配与回收策略"></a>1.6 内存分配与回收策略</h2><h3 id="1-6-1-对象优先在Eden分配"><a href="#1-6-1-对象优先在Eden分配" class="headerlink" title="1.6.1 对象优先在Eden分配"></a>1.6.1 对象优先在Eden分配</h3><ol>
-<li>多数情况下，对象在新生代Eden区分配，当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC</li>
-<li>此处的Minor GC指的是对新生代的GC。而Full GC/Major GC指的是对老年代的GC。</li>
-<li>利用参数-XX:+PrintGCDetails -XX:+PrintGCTimeStamps可以查看相关的GC日志。<h3 id="1-6-2-大对象直接进入老年代"><a href="#1-6-2-大对象直接进入老年代" class="headerlink" title="1.6.2 大对象直接进入老年代"></a>1.6.2 大对象直接进入老年代</h3></li>
-<li>对于体积较大的对象，直接进入老年代区域而不是分配到新生代。</li>
-<li>JVM参数-XX:PretenureSizeThreshold的意思就是将体积大于这个设置值的对象直接在老年代分配。<br>这样做是为了避免在Eden区及两个Survivor区之间发生大量的内存复制。</li>
-</ol>
-<h3 id="1-6-3-长期存活的对象将进入老年代"><a href="#1-6-3-长期存活的对象将进入老年代" class="headerlink" title="1.6.3 长期存活的对象将进入老年代"></a>1.6.3 长期存活的对象将进入老年代</h3><ol>
-<li>虚拟机采用了分代收集的思想来管理内存，那么内存回收时就必须能识别哪些对象应放在新生代，哪些对象应放在老年代中。 </li>
-<li>虚拟机给每个对象定义了一个对象年龄（Age）计数器。 如果对象在Eden出生并经过第一次Minor GC后仍然存活，并且能被Survivor容纳的话，将被移动到Survivor空间中，并且对象年龄设为1。 </li>
-<li>对象在Survivor区中每“熬过”一次Minor GC，年龄就增加1岁，当它的年龄增加到一定程度（默认为15岁），就将会被晋升到老年代中。</li>
-<li>对象晋升老年代的年龄阈值，可以通过参数-XX:MaxTenuringThreshold设置</li>
-</ol>
-<h3 id="1-6-4-动态对象年龄的判定"><a href="#1-6-4-动态对象年龄的判定" class="headerlink" title="1.6.4 动态对象年龄的判定"></a>1.6.4 动态对象年龄的判定</h3><p>为了能更好地适应不同程序的内存状况，虚拟机并不是永远地要求对象的年龄必须达到了MaxTenuringThreshold才能晋升老年代。<br>如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代，无须等到MaxTenuringThreshold中要求的年龄。</p>
-<h3 id="1-6-5-空间分配担保"><a href="#1-6-5-空间分配担保" class="headerlink" title="1.6.5 空间分配担保"></a>1.6.5 空间分配担保</h3><ol>
-<li>在发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那么Minor GC可以确保是安全的。 </li>
-<li>如果不成立，则虚拟机会查看HandlePromotionFailure设置值是否允许担保失败。</li>
-<li>如果允许，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试着进行一次Minor GC，尽管这次Minor GC是有风险的； </li>
-<li>如果小于，或者HandlePromotionFailure设置不允许冒险，那这时也要改为进行一次Full GC。</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/17/Java内存区域与内存溢出异常/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/17/Java内存区域与内存溢出异常/" itemprop="url">
-                  Java内存区域与内存溢出异常
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-17T02:06:43+08:00">
-                2017-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Java内存区域与内存溢出异常"><a href="#Java内存区域与内存溢出异常" class="headerlink" title="Java内存区域与内存溢出异常"></a>Java内存区域与内存溢出异常</h1><h2 id="1-1-运行时数据区域"><a href="#1-1-运行时数据区域" class="headerlink" title="1.1 运行时数据区域"></a>1.1 运行时数据区域</h2><p><img src="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png" alt=""></p>
-<hr>
-<h3 id="1-1-1-程序计数器"><a href="#1-1-1-程序计数器" class="headerlink" title="1.1.1 程序计数器"></a>1.1.1 程序计数器</h3><ol>
-<li>程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。</li>
-<li>任意时刻，一个处理器都只会执行一条线程中的指令，即每条线程都需要一个独立的计数器，为了线程切换后能恢复到正确的执行位置，使得各线程之间互不影响，独立存储。</li>
-<li>若正在执行一个java方法，这个计数器记录的是正在执行的虚拟机字节指令的地址；若执行的是Native方法，则这个计数器值为空</li>
-</ol>
-<h3 id="1-1-2-Java虚拟机栈"><a href="#1-1-2-Java虚拟机栈" class="headerlink" title="1.1.2 Java虚拟机栈"></a>1.1.2 Java虚拟机栈</h3><ol>
-<li>同程序计数器一样是线程私有的，生命周期与线程相同</li>
-<li>描述的是java方法执行的内存模型，每个方法被执行时会创建一个栈帧，存储局部变量表，操作数栈，动态链接，方法出口等信息</li>
-<li>局部变量表存放了编译器可知的各种基本数据类型，对象引用和returnAddress类型，其中64位长度的long和double类型的数据会占用2个局部变量空间，其余类型只占用1个。</li>
-<li>局部变量表所需的内存空间在编译期间完成分配，在方法运行期间不会改变局部变量表的大小</li>
-<li>线程请求的栈深度大于虚拟机所允许的深度，抛出StackOverflowError异常；扩展时无法申请到足够的内存，抛出OutOfMemoryError异常</li>
-</ol>
-<h3 id="1-1-3-本地方法栈"><a href="#1-1-3-本地方法栈" class="headerlink" title="1.1.3 本地方法栈"></a>1.1.3 本地方法栈</h3><p>与虚拟机栈所发挥的作用非常相似，区别就是虚拟机栈为虚拟机执行java方法，而本地方法栈则为虚拟机使用到的Nativa方法服务，同虚拟机栈一样，也会抛出StackOverflowError异常和OutOfMemoryError异常</p>
-<h3 id="1-1-3-Java堆"><a href="#1-1-3-Java堆" class="headerlink" title="1.1.3 Java堆"></a>1.1.3 Java堆</h3><ol>
-<li>是Java虚拟机所管理的内存中最大的一块，被所有线程共享，存放绝大部分的对象实例</li>
-<li>Java堆是垃圾收集器管理的主要区域，故被称为“GC堆”</li>
-<li>Java堆可以处于物理上不连续的内存空间中，只要逻辑连续就可以，可以选择固定大小，可拓展</li>
-</ol>
-<h3 id="1-1-4-方法区（非堆）"><a href="#1-1-4-方法区（非堆）" class="headerlink" title="1.1.4 方法区（非堆）"></a>1.1.4 方法区（非堆）</h3><ol>
-<li>与Java堆一样，是各个线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据</li>
-<li>也称为“永久代”，HotSpot为了简便回收方法区的内存，即垃圾收集器可以像管理Java堆一样管理这部分内存</li>
-<li>不需要连续的内存，可以选择固定大小，可拓展，还可选择不实现垃圾收集</li>
-<li>这个区域回收目标主要是针对常量池的的回收和对类型的卸载，但是效果不佳。<h3 id="1-1-5-运行时常量池"><a href="#1-1-5-运行时常量池" class="headerlink" title="1.1.5 运行时常量池"></a>1.1.5 运行时常量池</h3></li>
-<li>是方法区的一部分，存放编译期生成的各种字面量和符号引用</li>
-<li>具备动态性，不要求常量一定只有编译期才能产生，运行期间也可能将新的常量放入池中，如String类的intern（）方法</li>
-</ol>
-<h3 id="1-1-6-直接内存"><a href="#1-1-6-直接内存" class="headerlink" title="1.1.6 直接内存"></a>1.1.6 直接内存</h3><ol>
-<li>不是虚拟机运行时数据区的一部分</li>
-<li>NIO中的一种基于通道与缓冲区的I/O方式，可以使用Native函数库直接分配堆外内存，通过一个存储在Java堆中的DirectByteBuffer对象作为这块内存的引用进行操作</li>
-</ol>
-<h2 id="1-2-HotSpot虚拟机对象探秘"><a href="#1-2-HotSpot虚拟机对象探秘" class="headerlink" title="1.2 HotSpot虚拟机对象探秘"></a>1.2 HotSpot虚拟机对象探秘</h2><h3 id="1-2-1-对象的创建"><a href="#1-2-1-对象的创建" class="headerlink" title="1.2.1 对象的创建"></a>1.2.1 对象的创建</h3><ol>
-<li>检查这个指令的参数是否能在常量池中定位到一个类的符号应用，并且检查这个符号引用代表的类是否已经被加载、解析和初始化过。若没有则先执行相应的类加载过程</li>
-<li>类加载检查通过后，为新生对象分配内存。对象所需内存的大小在类加载完成后便可确定</li>
-<li>若Java堆中内存是绝对规整的，所有用过的内存放在一边，没有用过的内存放在另一边，中间放着一个指针作为分界点的指示器，那所分配内存就仅仅是吧那个指针向空闲空间那边挪动一段与对象大小相等的距离，这种分配方式叫做“指针碰撞”</li>
-<li>若不是规整的，已使用和未使用的内存相互交错，故虚拟机就必须维护一个列表，记录上哪些内存块是可用的，在分配时从列表中找到一块足够大的空间划分给对象实例，并更新列表上的记录，这种方式叫做“空闲列表”</li>
-<li>Java堆是否规整是由所采用的垃圾收集器是否带有压缩整理功能决定的。使用Serial、ParNew等带Compact过程的收集器时，采用的是指针碰撞；使用CMS这种基于Mark-Sweep算法的收集器时，通常采用空闲列表</li>
-<li><p>解决频繁分配内存的问题：</p>
-<ol>
-<li>对分配内存空间的动作进行同步处理</li>
-<li>把内存分配的动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中先预先分配一小块内存，称为本地线程分配缓存（TLAB）</li>
-</ol>
-</li>
-<li><p>内存分配后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值</p>
-</li>
-<li>接下来虚拟机就要对对象进行必要的设置，例如这个对象是那个类的实例，如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息，存放在对象头之中</li>
-<li>执行<init>方法，把对象按照程序员的意愿进行初始化</init></li>
-</ol>
-<h3 id="1-2-2-对象的内存布局"><a href="#1-2-2-对象的内存布局" class="headerlink" title="1.2.2 对象的内存布局"></a>1.2.2 对象的内存布局</h3><ol>
-<li>对象在内存中存储的布局可以分为三块区域：对象头、实例数据、对齐填充</li>
-<li><p>对象头包括两部分信息：</p>
-<ol>
-<li>用于存储自身的运行时数据，哈希码、对象的GC分代年龄等信息，这部分数据长度在32位和64位虚拟机中分别为32bit和64bit</li>
-<li>类型指针，即对象指向他的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，并不是所有虚拟机实现都必须在对象数据上保留类型指针，即查找对象的元数据信息并不一定要经过对象本身</li>
-</ol>
-</li>
-<li><p>如果对象是Java数组，对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通Java对象得元数据信息确定Java对象的大小，但是从数组的元数据信息无法确定长度</p>
-</li>
-<li>实例数据：父类继承，子类定义的都需要记录<ol>
-<li>HotSpot虚拟机默认分配策略为longs/double,ints,shorts/chars,bytes/booleans,oops。即相同宽度的字段总是分配到一起</li>
-<li>若CompactFields参数值为true（默认为true），子类之中较窄的变量也可能会插入父类变量空隙中</li>
-</ol>
-</li>
-</ol>
-<p>5.对其填充并不是必然存在，仅仅起着占位符的作用，因为HotSpot的自动内存管理系统要求对象其实地址必须是8字节的倍数。</p>
-<h3 id="1-2-3-对象的访问定位"><a href="#1-2-3-对象的访问定位" class="headerlink" title="1.2.3 对象的访问定位"></a>1.2.3 对象的访问定位</h3><ol>
-<li>通过栈上的reference数据来操作对上的具体对象</li>
-<li>使用句柄：Java堆中会划分出一块内存来作为句柄池，reference存储的是对象的句柄地址，句柄中包含了对象实例数据（堆中的对象信息）与类型数据（方法区中的类信息）各自的具体地址信息</li>
-<li>直接指针访问：reference存储的直接就是对象地址，故堆对象中的布局中应该考虑如何放置访问类型数据的相关信息（方法区中的类信息）</li>
-<li>句柄访问好处是reference存储的是稳定的句柄地址，对象移动时只会改变句柄中的实例数据指针，reference本身不需改变，使用句柄访问的情况也十分常见。</li>
-<li>指针访问好处是速度更快，节省了一次指针定位的时间，HotSpot就是使用这种方式进行对象访问的</li>
-</ol>
-<h2 id="1-3-OutOfMemoryError异常"><a href="#1-3-OutOfMemoryError异常" class="headerlink" title="1.3 OutOfMemoryError异常"></a>1.3 OutOfMemoryError异常</h2><h2 id="1-3-1-Java堆异常"><a href="#1-3-1-Java堆异常" class="headerlink" title="1.3.1 Java堆异常"></a>1.3.1 Java堆异常</h2><ol>
-<li>实例对象数量到达最大堆的容量限制后就会产生内存溢出异常</li>
-<li>参数：堆的最小值-Xms  堆的最大值-Xmx  两者设置为一样即可避免堆自动扩展</li>
-<li>参数 -XX:+HeapDumpOnOutOfMemoryError可以让虚拟机在出现内存溢出异常时Dump出当前的内存堆转储快照</li>
-<li>解决：先通过内存映像分析工具堆Dump出来的堆转储快照进行分析。分析是内存泄漏还是内存溢出</li>
-</ol>
-<h2 id="1-3-2-虚拟机栈和本地方法栈溢出"><a href="#1-3-2-虚拟机栈和本地方法栈溢出" class="headerlink" title="1.3.2 虚拟机栈和本地方法栈溢出"></a>1.3.2 虚拟机栈和本地方法栈溢出</h2><ol>
-<li>HotSpot中并不区分虚拟机栈和本地方法栈，故-Xoss（设置本地方法栈大小）基本上无效</li>
-<li>栈容量由-Xss参数设定</li>
-<li>线程请求的栈深度大于虚拟机所允许的深度，抛出StackOverflowError异常；扩展时无法申请到足够的内存，抛出OutOfMemoryError异常</li>
-<li>单线程下 无论是栈帧太大还是虚拟机栈容量太小，当内存无法分配的时候，虚拟机抛出的都是StackOverflowError异常</li>
-<li>如果是建立过多线程导致内存溢出，在不能减少线程数或者更换64位虚拟机的情况下，就只能通过减少最大堆和减少栈容量来换取更多的线程</li>
-</ol>
-<h2 id="1-3-3-方法区和运行时常量池溢出"><a href="#1-3-3-方法区和运行时常量池溢出" class="headerlink" title="1.3.3 方法区和运行时常量池溢出"></a>1.3.3 方法区和运行时常量池溢出</h2><ol>
-<li><p>String.intern()是一个Native方法</p>
-<ol>
-<li>JDK1.6中，会将首次遇到的字符串实例复制到永久代中，返回永久代中这个字符串实例的引用</li>
-<li>JDK1.7不在复制实例，只是在常量池中记录<strong>首次出现</strong>的实例引用</li>
-</ol>
-</li>
-<li><p>-XX:PermSize -XX:MaxPermSize 限制方法区的大小</p>
-</li>
-</ol>
-<h2 id="1-3-4-本机直接内存溢出"><a href="#1-3-4-本机直接内存溢出" class="headerlink" title="1.3.4 本机直接内存溢出"></a>1.3.4 本机直接内存溢出</h2><ol>
-<li>可通过-XX:MaxDirectMemorySize指定，默认则与Java堆最大值一样</li>
-<li>虽然使用DirectByteBuffer分配内存也会抛出内存溢出异常，但是并没有向操作系统申请分配内存，而是通过计算得知内存无法分配，真正分配内存的方法时unsafe.allocateMemory()</li>
-<li>DirectMemory导致的内存溢出，特征是Heap Dump文件中不会看见明显的异常，Dump文件很小，程序中使用了NIO</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
     
       
 
@@ -899,17 +337,279 @@
       
         
           
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in 
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/03/16/hello-world/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/05/垃圾收集器与内存分配策略/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Logan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logan.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扯皮屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/05/垃圾收集器与内存分配策略/" itemprop="url">
+                  垃圾收集器与内存分配策略
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-05T00:00:00+08:00">
+                2017-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
 
           
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          垃圾收集器与内存分配策略1.1 概述
+程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
+GC所关心的是堆和方法区的内存
+
+1.2 对象已死吗
+判断对象的“生死”1.2.1 引用计数算法
+给对象中添加一个引用计数器，每当有一
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/03/05/垃圾收集器与内存分配策略/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/Java内存区域与内存溢出异常/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Logan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logan.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扯皮屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/02/Java内存区域与内存溢出异常/" itemprop="url">
+                  Java内存区域与内存溢出异常
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">
+                2017-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          Java内存区域与内存溢出异常1.1 运行时数据区域
+
+1.1.1 程序计数器
+程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。
+任
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/03/02/Java内存区域与内存溢出异常/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -996,6 +696,15 @@
           
 
           
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
 
         </nav>
 
@@ -1060,17 +769,6 @@
   <span class="author" itemprop="copyrightHolder">Logan</span>
 </div>
 
-
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
 
 
         

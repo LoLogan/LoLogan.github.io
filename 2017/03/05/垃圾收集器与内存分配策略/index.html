@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="JVM," />
 
 
 
@@ -96,7 +96,7 @@ GC所关心的是堆和方法区的内存
 给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使">
 <meta property="og:type" content="article">
 <meta property="og:title" content="垃圾收集器与内存分配策略">
-<meta property="og:url" content="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/03/05/垃圾收集器与内存分配策略/index.html">
 <meta property="og:site_name" content="扯皮屋">
 <meta property="og:description" content="垃圾收集器与内存分配策略1.1 概述
 程序计数器、虚拟机栈、本地方法栈3个区域与线程共生死，方法结束或线程结束时候，内存自然就跟着回收了，故不需要过多考虑回收的问题
@@ -106,7 +106,7 @@ GC所关心的是堆和方法区的内存
 判断对象的“生死”1.2.1 引用计数算法
 给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失败时，计数器就减一；任何时候计数器为零的对象就是不可能再被使">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/650075-8c5080659578032d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-03-16T18:07:45.476Z">
+<meta property="og:updated_time" content="2017-03-17T09:28:48.684Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器与内存分配策略">
 <meta name="twitter:description" content="垃圾收集器与内存分配策略1.1 概述
@@ -144,7 +144,7 @@ GC所关心的是堆和方法区的内存
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/05/垃圾收集器与内存分配策略/"/>
 
 
 
@@ -222,7 +222,7 @@ GC所关心的是堆和方法区的内存
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
+          <a href="/about.md" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -279,7 +279,7 @@ GC所关心的是堆和方法区的内存
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/17/垃圾收集器与内存分配策略/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/05/垃圾收集器与内存分配策略/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Logan">
@@ -315,8 +315,8 @@ GC所关心的是堆和方法区的内存
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-17T02:07:45+08:00">
-                2017-03-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-05T00:00:00+08:00">
+                2017-03-05
               </time>
             
 
@@ -599,6 +599,12 @@ GC所关心的是堆和方法区的内存
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
 
       
         
@@ -608,7 +614,7 @@ GC所关心的是堆和方法区的内存
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/17/Java内存区域与内存溢出异常/" rel="next" title="Java内存区域与内存溢出异常">
+              <a href="/2017/03/02/Java内存区域与内存溢出异常/" rel="next" title="Java内存区域与内存溢出异常">
                 <i class="fa fa-chevron-left"></i> Java内存区域与内存溢出异常
               </a>
             
@@ -617,6 +623,10 @@ GC所关心的是堆和方法区的内存
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/16/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -696,6 +706,15 @@ GC所关心的是堆和方法区的内存
 
           
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
@@ -777,17 +796,6 @@ GC所关心的是堆和方法区的内存
   <span class="author" itemprop="copyrightHolder">Logan</span>
 </div>
 
-
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
 
 
         
