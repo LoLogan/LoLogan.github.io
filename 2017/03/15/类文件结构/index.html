@@ -99,7 +99,7 @@ Class文件格式只有两种数据类型：无符号数和表。
 表是由多个无符号数或者其他表作为数据项构成的复合数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="类文件结构">
-<meta property="og:url" content="http://yoursite.com/2017/03/02/类文件结构/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/03/15/类文件结构/index.html">
 <meta property="og:site_name" content="扯皮屋">
 <meta property="og:description" content="类文件结构
 代码编译的结果从本地机器码转变为字节码
@@ -111,7 +111,7 @@ Class文件是一组以8位字节为基础单位的二进制流。
 Class文件格式只有两种数据类型：无符号数和表。
 无符号数属于基本的数据类型，以u1、u2、u4、u8代表1/2/4/8字节的无符号数，可以用于描述数字，索引引用、数量值或者按照UTF-8编码构成字符串值
 表是由多个无符号数或者其他表作为数据项构成的复合数">
-<meta property="og:updated_time" content="2017-03-17T16:46:09.215Z">
+<meta property="og:updated_time" content="2017-03-19T07:50:59.167Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="类文件结构">
 <meta name="twitter:description" content="类文件结构
@@ -151,7 +151,7 @@ Class文件格式只有两种数据类型：无符号数和表。
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/02/类文件结构/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/15/类文件结构/"/>
 
 
 
@@ -286,7 +286,7 @@ Class文件格式只有两种数据类型：无符号数和表。
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/类文件结构/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/15/类文件结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Logan">
@@ -322,8 +322,8 @@ Class文件格式只有两种数据类型：无符号数和表。
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">
-                2017-03-02
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-15T00:00:00+08:00">
+                2017-03-15
               </time>
             
 
@@ -431,7 +431,85 @@ Class文件格式只有两种数据类型：无符号数和表。
 <li>对于方法表集合，入口第一项为容器计数器（u2类型的数据），表示方法数量</li>
 <li>volatile和transient关键字不能修饰方法，synchronized、native、strictfp和abstract关键字可以修饰方法</li>
 <li>方法里的代码，经过编译器变异成字节码指令后，存放在方法属性表集合中一个名为”Code”的属性里面</li>
+<li>如果父类方法在子类中没有被重写，方法表集合中就不会出现来自父类的方法信息</li>
 </ol>
+<h3 id="1-7-属性表集合"><a href="#1-7-属性表集合" class="headerlink" title="1.7 属性表集合"></a>1.7 属性表集合</h3><ul>
+<li>在Class文件、字段表、方法表都可携带自己的属性表集合，用于描述某些场景专有的信息</li>
+</ul>
+<h2 id="2-字节码指令简介"><a href="#2-字节码指令简介" class="headerlink" title="2 字节码指令简介"></a>2 字节码指令简介</h2><blockquote>
+<p>Java虚拟机的指令由一个字节长度的、代表着某种特定操作含义的数字以及跟随其后的零或至多个代表此操作所需参数而构成。</p>
+<p>因为Java虚拟机采用面向操作数栈而不是寄存器的架构，所以大多数的指令都不包含操作数，只有一个操作码</p>
+</blockquote>
+<h3 id="2-1-字节码与数据类型"><a href="#2-1-字节码与数据类型" class="headerlink" title="2.1 字节码与数据类型"></a>2.1 字节码与数据类型</h3><ul>
+<li>Java虚拟机的指令集中，大多数的指令都包含了其操作所对应的数据类型信息</li>
+<li>Java虚拟机的指令集对于特定的操作只提供了优先的类型相关指令去支持，即有一些单独的指令可以在必要的时候用来将一些不支持的类型转换为可被支持的类型</li>
+<li>例如大部分对于boolean、byte、short、char类型数据的操作，实际上都是使用相应int类型作为运算类型</li>
+</ul>
+<h3 id="2-2-加载和存储指令"><a href="#2-2-加载和存储指令" class="headerlink" title="2.2 加载和存储指令"></a>2.2 加载和存储指令</h3><ul>
+<li>加载（load）和存储（store）指令用于将数据在栈帧中的局部变量表和操作数栈之间来回传输</li>
+<li>存储数据的操作数栈和局部变量表主要就是由加载和存储指令进行操作，除此之外，还有少量指令，如访问对象的字段或数组元素的指令也会向操作数栈传输数据。</li>
+</ul>
+<h3 id="2-3-运算指令"><a href="#2-3-运算指令" class="headerlink" title="2.3 运算指令"></a>2.3 运算指令</h3><ul>
+<li>运算或算术指令用于对两个操作数栈上的值进行某种特定运算，并把结果重新存入到操作栈顶。大体上算术指令可以分为两种：对整型数据进行运算的指令与对浮点型数据进行运算的指令，无论是哪种算术指令，都使用 Java 虚拟机的数据类型，由于没有直接支持 byte、short、char 和 boolean 类型的算术指令，对于这类数据的运算，应使用操作 int 类型的指令代替。整数与浮点数的算术指令在溢出和被零除的时候也有各自不同的行为表现</li>
+</ul>
+<h3 id="2-4-类型转换指令"><a href="#2-4-类型转换指令" class="headerlink" title="2.4 类型转换指令"></a>2.4 类型转换指令</h3><blockquote>
+<p>类型转换指令可以将两种不同的数值类型进行相互转换，这些转换操作一般用于实现用户代码中的显示类型转换操作</p>
+</blockquote>
+<ol>
+<li>在将 int 或 long 类型窄化转换为整数类型 T 的时候，转换过程仅仅是简单地丢弃除最低位 N 个字节以外的内容，N 是类型 T 的数据类型长度，这将可能导致转换结果与输入值有不同的正负号。这点很容易理解，因为原来符号位处于数值的最高位，高位被丢弃之后，转换结果的符号就取决于低 N 个字节的首位了。</li>
+<li>在将一个浮点值窄化转换为整数类型 T（T 限于 int 或 long 类型之一）的时候，将遵循以下转换规则：<ol>
+<li>如果浮点值是 NaN，那转换结果就是 int 或 long 类型的 0。</li>
+<li>如果浮点值不是无穷大的话，浮点值使用 IEEE 754 的向零舍入模式取整，获得整数值 v，如果 v 在目标类型 T（int 或 long）的表示范围之内，那转换结果就是 v。</li>
+<li>否则，将根据 v 的符号，转换为 T 所能表示的最大或者最小整数。</li>
+</ol>
+</li>
+</ol>
+<h3 id="2-5-对象创建与访问指令"><a href="#2-5-对象创建与访问指令" class="headerlink" title="2.5 对象创建与访问指令"></a>2.5 对象创建与访问指令</h3><ul>
+<li>虽然类实例和数组都是对象，但 Java 虚拟机对类实例和数组的创建与操作使用了不同的字节码指令（数组和普通类型创建过程是不同的）。对象创建后，就可以通过对象访问指令获取对象实例或者数组实例中的字段或者数组元素，这些指令如下<ul>
+<li>创建类实例的指令：new</li>
+<li>创建数组的指令：newarray、anewarray、multianewarray</li>
+<li>访问类字段（static 字段，或者成为类变量）和实例字段（非 static 字段，或者成为实例变量）的指令：getfield、putfield、getstatic、putstatic</li>
+<li>把一个数组元素加载到操作数栈的指令：baload、caload、saload、iaload、laload、faload、daload、aaload</li>
+<li>将一个操作数栈的值存储到数组元素中的指令：bastore、castore、sastore、iastore、fastore、dastore、aastore</li>
+<li>取数组长度的指令：arraylength</li>
+<li>检查类实例类型的指令：instanceof、checkcast</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-6-操作数栈管理指令"><a href="#2-6-操作数栈管理指令" class="headerlink" title="2.6 操作数栈管理指令"></a>2.6 操作数栈管理指令</h3><ul>
+<li>如同操作一个普通数据结构中的堆栈那样，Java 虚拟机提供了一些用于直接操作操作数栈的指令，包括：<ul>
+<li>将操作数栈的栈顶一个或两个元素出栈：pop、pop2</li>
+<li>复制栈顶一个或两个数值并将复制值或双份的复制重新压入栈顶：dup、dup2、dup_x1、dup2_x1、dup_x2、dup2_x2</li>
+<li>将栈最顶端的两个数值互换：swap</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-7-控制转移指令"><a href="#2-7-控制转移指令" class="headerlink" title="2.7 控制转移指令"></a>2.7 控制转移指令</h3><ul>
+<li><p>控制转移指令可以让 Java 虚拟机有条件或无条件地从指定的位置指令而不是控制转移指令的下一条指令继续执行程序，从概念模型上理解，可以认为控制转移指令就是在有条件或无条件地修改 PC 寄存器的值。控制转移指令如下</p>
+<ul>
+<li>条件分支：ifeq、iflt、ifle、ifne、ifgt、ifge、ifnull、ifnonnull、<code>if_icmpeq</code>、<code>if_icmpne</code>、<code>if_icmplt</code>、<code>if_icmpgt</code>、<code>if_icmple</code>、<code>if_icmpge</code>、<code>if_acmpeq</code> 和 <code>if_acmpne</code></li>
+<li>复合条件分支：tableswitch、lookupswitch</li>
+<li>无条件分支：goto、goto_w、jsr、jsr_w、ret</li>
+</ul>
+</li>
+<li><p>在 Java 虚拟机中有专门的指令集用来处理 int 和 reference 类型的条件分支比较操作，为了可以无须明显标识一个实体值是否 null，也有专门的指令用来检测 null 值。</p>
+</li>
+<li>与前面算术运算是的规则一致，对于 boolean 类型、byte 类型、char 类型和 short 类型的条件分支比较操作，都是使用 int 类型的比较指令来完成</li>
+<li>对于 long 类型、float 类型和 double 类型的条件分支比较操作，则会先执行相应类型的比较运算指令（dcmpg、dcmpl、fcmpg、fcmpl、lcmp），运算指令会返回一个整形值到操作数栈中，随后再执行 int 类型的条件分支比较操作来完成整个分支跳转。由于各种类型的比较最终都会转化为 int 类型的比较操作，int 类型比较是否方便完善就显得尤为重要，所以 Java 虚拟机提供的 int 类型的条件分支指令是最为丰富和强大的</li>
+</ul>
+<h3 id="2-8-方法调用和返回指令"><a href="#2-8-方法调用和返回指令" class="headerlink" title="2.8 方法调用和返回指令"></a>2.8 方法调用和返回指令</h3><p><strong>方法调用</strong>（分派、执行过程），先列举以下 5 条用于方法调用的指令</p>
+<ol>
+<li>invokevirtual    指令用于调用对象的实例方法，根据对象的实际类型进行分派（虚方法分派），这也是 Java 语言中最常见的方法分派方式。</li>
+<li>invokeinterface    指令用于调用接口方法，它会在运行时搜索一下实现了这个接口方法的对象，找出适合的方法进行调用。</li>
+<li>invokespecial    指令用于调用一些需要特殊处理的实例方法，包括实例初始化方法、私有方法和父类方法。</li>
+<li>invokestatic    指令用于调用类方法（static 方法）。</li>
+<li>invokedynamic    指令用于在运行时动态解析出调用点限定符所引用的方法，并执行该方法，前面 4 条调用指令的分派逻辑都固化在 Java 虚拟机内部，而 invokedynamic 指令的分派逻辑是由用户所设定的引导方法决定的。</li>
+</ol>
+<p>方法调用指令与数据类型无关，而<strong>方法返回</strong>指令是根据返回值的类型区分的，包括 ireturn（当返回值是 boolean、byte、char、short 和 int 类型时使用）、lreturn、freturn、dreturn 和 areturn，另外还有一条return 指令共声明为 void 的方法、实例初始化方法以及类和接口的类初始化方法使用。</p>
+<h3 id="2-9-异常处理指令"><a href="#2-9-异常处理指令" class="headerlink" title="2.9 异常处理指令"></a>2.9 异常处理指令</h3><ul>
+<li>在 Java 程序中显式抛出异常的操作（throw 语句）都由 athrow 指令来实现，除了用 throw 语句显式抛出异常情况之外，Java 虚拟机规范还规定了许多运行时异常会在其他 Java 虚拟机指令检测到异常状况时自动抛出。例如，在前面介绍的整数运算中，当除数为零时，虚拟机会在 idiv 或 ldiv 指令中抛出 ArithmeticException 异常。</li>
+<li>在 Java 虚拟机中，处理异常（catch 语句）不是由字节码指令来实现的（很久之前曾经使用 jsr 和 ret 指令来实现，现在已经不用了），而是采用异常表来完成的。</li>
+</ul>
 
       
     </div>
@@ -474,14 +552,18 @@ Class文件格式只有两种数据类型：无符号数和表。
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/03/05/垃圾收集器与内存分配策略/" rel="next" title="垃圾收集器与内存分配策略">
+                <i class="fa fa-chevron-left"></i> 垃圾收集器与内存分配策略
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/03/02/Java内存区域与内存溢出异常/" rel="prev" title="Java内存区域与内存溢出异常">
-                Java内存区域与内存溢出异常 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/03/19/虚拟机类加载机制/" rel="prev" title="虚拟机类加载机制">
+                虚拟机类加载机制 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -554,7 +636,7 @@ Class文件格式只有两种数据类型：无符号数和表。
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -622,7 +704,7 @@ Class文件格式只有两种数据类型：无符号数和表。
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#类文件结构"><span class="nav-number">1.</span> <span class="nav-text">类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Class类文件的结构"><span class="nav-number">1.1.</span> <span class="nav-text">1. Class类文件的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-魔数与Class文件的版本"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 魔数与Class文件的版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-常量池"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-访问标志"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 访问标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-类索引、父类索引与接口索引集合"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 类索引、父类索引与接口索引集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-字段表集合"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 字段表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-方法表集合"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 方法表集合</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#类文件结构"><span class="nav-number">1.</span> <span class="nav-text">类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Class类文件的结构"><span class="nav-number">1.1.</span> <span class="nav-text">1. Class类文件的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-魔数与Class文件的版本"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 魔数与Class文件的版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-常量池"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-访问标志"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 访问标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-类索引、父类索引与接口索引集合"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 类索引、父类索引与接口索引集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-字段表集合"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 字段表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-方法表集合"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 方法表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-属性表集合"><span class="nav-number">1.1.7.</span> <span class="nav-text">1.7 属性表集合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-字节码指令简介"><span class="nav-number">1.2.</span> <span class="nav-text">2 字节码指令简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-字节码与数据类型"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 字节码与数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-加载和存储指令"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 加载和存储指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-运算指令"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 运算指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-类型转换指令"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 类型转换指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-对象创建与访问指令"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 对象创建与访问指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-操作数栈管理指令"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 操作数栈管理指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-控制转移指令"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 控制转移指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-方法调用和返回指令"><span class="nav-number">1.2.8.</span> <span class="nav-text">2.8 方法调用和返回指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9-异常处理指令"><span class="nav-number">1.2.9.</span> <span class="nav-text">2.9 异常处理指令</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
