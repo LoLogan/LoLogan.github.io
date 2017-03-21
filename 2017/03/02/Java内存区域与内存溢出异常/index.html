@@ -102,7 +102,7 @@
 程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。
 任意时刻，一个处理器都只会执行一条线程中的指令，即每条线程都需要一个独立的计数器，为了线程切换后能恢复">
 <meta property="og:image" content="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png">
-<meta property="og:updated_time" content="2017-03-17T09:28:23.984Z">
+<meta property="og:updated_time" content="2017-03-21T10:48:32.827Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域与内存溢出异常">
 <meta name="twitter:description" content="Java内存区域与内存溢出异常1.1 运行时数据区域
@@ -369,7 +369,9 @@
 <li>与Java堆一样，是各个线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据</li>
 <li>也称为“永久代”，HotSpot为了简便回收方法区的内存，即垃圾收集器可以像管理Java堆一样管理这部分内存</li>
 <li>不需要连续的内存，可以选择固定大小，可拓展，还可选择不实现垃圾收集</li>
-<li>这个区域回收目标主要是针对常量池的的回收和对类型的卸载，但是效果不佳。<h3 id="1-1-5-运行时常量池"><a href="#1-1-5-运行时常量池" class="headerlink" title="1.1.5 运行时常量池"></a>1.1.5 运行时常量池</h3></li>
+<li>这个区域回收目标主要是针对常量池的的回收和对类型的卸载，但是效果不佳。</li>
+</ol>
+<h3 id="1-1-5-运行时常量池"><a href="#1-1-5-运行时常量池" class="headerlink" title="1.1.5 运行时常量池"></a>1.1.5 运行时常量池</h3><ol>
 <li>是方法区的一部分，存放编译期生成的各种字面量和符号引用</li>
 <li>具备动态性，不要求常量一定只有编译期才能产生，运行期间也可能将新的常量放入池中，如String类的intern（）方法</li>
 </ol>
