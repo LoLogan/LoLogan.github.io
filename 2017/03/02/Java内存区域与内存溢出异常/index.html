@@ -102,7 +102,7 @@
 程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。
 任意时刻，一个处理器都只会执行一条线程中的指令，即每条线程都需要一个独立的计数器，为了线程切换后能恢复">
 <meta property="og:image" content="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png">
-<meta property="og:updated_time" content="2017-03-21T11:11:22.433Z">
+<meta property="og:updated_time" content="2017-03-21T11:12:31.163Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域与内存溢出异常">
 <meta name="twitter:description" content="Java内存区域与内存溢出异常1.1 运行时数据区域
@@ -409,9 +409,7 @@
 <li>若CompactFields参数值为true（默认为true），子类之中较窄的变量也可能会插入父类变量空隙中</li>
 </ol>
 </li>
-</ol>
-<p>5.对其填充并不是必然存在，仅仅起着占位符的作用，因为HotSpot的自动内存管理系统要求对象其实地址必须是8字节的倍数。</p>
-<h3 id="1-2-3-对象的访问定位"><a href="#1-2-3-对象的访问定位" class="headerlink" title="1.2.3 对象的访问定位"></a>1.2.3 对象的访问定位</h3><ol>
+<li>对其填充并不是必然存在，仅仅起着占位符的作用，因为HotSpot的自动内存管理系统要求对象其实地址必须是8字节的倍数。<h3 id="1-2-3-对象的访问定位"><a href="#1-2-3-对象的访问定位" class="headerlink" title="1.2.3 对象的访问定位"></a>1.2.3 对象的访问定位</h3></li>
 <li>通过栈上的reference数据来操作对上的具体对象</li>
 <li>使用句柄：Java堆中会划分出一块内存来作为句柄池，reference存储的是对象的句柄地址，句柄中包含了对象实例数据（堆中的对象信息）与类型数据（方法区中的类信息）各自的具体地址信息</li>
 <li>直接指针访问：reference存储的直接就是对象地址，故堆对象中的布局中应该考虑如何放置访问类型数据的相关信息（方法区中的类信息）</li>
