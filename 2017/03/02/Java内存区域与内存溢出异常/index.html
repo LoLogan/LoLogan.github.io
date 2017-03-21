@@ -102,7 +102,7 @@
 程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。
 任意时刻，一个处理器都只会执行一条线程中的指令，即每条线程都需要一个独立的计数器，为了线程切换后能恢复">
 <meta property="og:image" content="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png">
-<meta property="og:updated_time" content="2017-03-21T10:48:32.827Z">
+<meta property="og:updated_time" content="2017-03-21T11:11:22.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域与内存溢出异常">
 <meta name="twitter:description" content="Java内存区域与内存溢出异常1.1 运行时数据区域
@@ -398,13 +398,11 @@
 </ol>
 <h3 id="1-2-2-对象的内存布局"><a href="#1-2-2-对象的内存布局" class="headerlink" title="1.2.2 对象的内存布局"></a>1.2.2 对象的内存布局</h3><ol>
 <li>对象在内存中存储的布局可以分为三块区域：对象头、实例数据、对齐填充</li>
-<li><p>对象头包括两部分信息：</p>
-<ol>
+<li>对象头包括两部分信息：<ol>
 <li>用于存储自身的运行时数据，哈希码、对象的GC分代年龄等信息，这部分数据长度在32位和64位虚拟机中分别为32bit和64bit</li>
 <li>类型指针，即对象指向他的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，并不是所有虚拟机实现都必须在对象数据上保留类型指针，即查找对象的元数据信息并不一定要经过对象本身</li>
+<li>如果对象是Java数组，对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通Java对象得元数据信息确定Java对象的大小，但是从数组的元数据信息无法确定长度</li>
 </ol>
-</li>
-<li><p>如果对象是Java数组，对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通Java对象得元数据信息确定Java对象的大小，但是从数组的元数据信息无法确定长度</p>
 </li>
 <li>实例数据：父类继承，子类定义的都需要记录<ol>
 <li>HotSpot虚拟机默认分配策略为longs/double,ints,shorts/chars,bytes/booleans,oops。即相同宽度的字段总是分配到一起</li>
