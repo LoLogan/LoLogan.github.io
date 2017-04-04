@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JAVA," />
+  <meta name="keywords" content="并发编程," />
 
 
 
@@ -87,37 +87,31 @@
 
 
 
-<meta name="description" content="Final关键字&amp;amp;初始化及类的加载
-无法改变
-1.final数据
-对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
-可以在编译时执行计算式，减轻了一些运行时的负担
-在对此类常量进行定义时，必须对其进行赋值
-一个static又是final的域只占据一段不能改变的存储空间
-static和fi">
+<meta name="description" content="Java并发基础1. 初始线程：线程的基本操作1.1 新建线程1.2 终止线程
+弃用了stop方法，因为stop方法过于暴力，强行把执行到一半的线程终止，释放锁，会引起数据不一致问题
+1.3 线程中断
+线程中断是一种重要的线程协作机制
+
+  public void Thread.interrupt()                //中断线程  public boolean Thread.isI">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Final关键字&初始化及类的加载">
-<meta property="og:url" content="http://yoursite.com/2017/03/05/Final关键字&初始化及类的加载/index.html">
+<meta property="og:title" content="Java并发基础">
+<meta property="og:url" content="http://yoursite.com/2017/04/04/并发基础/index.html">
 <meta property="og:site_name" content="扯皮屋">
-<meta property="og:description" content="Final关键字&amp;amp;初始化及类的加载
-无法改变
-1.final数据
-对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
-可以在编译时执行计算式，减轻了一些运行时的负担
-在对此类常量进行定义时，必须对其进行赋值
-一个static又是final的域只占据一段不能改变的存储空间
-static和fi">
-<meta property="og:updated_time" content="2017-03-17T16:51:09.613Z">
+<meta property="og:description" content="Java并发基础1. 初始线程：线程的基本操作1.1 新建线程1.2 终止线程
+弃用了stop方法，因为stop方法过于暴力，强行把执行到一半的线程终止，释放锁，会引起数据不一致问题
+1.3 线程中断
+线程中断是一种重要的线程协作机制
+
+  public void Thread.interrupt()                //中断线程  public boolean Thread.isI">
+<meta property="og:updated_time" content="2017-04-04T18:53:48.199Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Final关键字&初始化及类的加载">
-<meta name="twitter:description" content="Final关键字&amp;amp;初始化及类的加载
-无法改变
-1.final数据
-对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象
-可以在编译时执行计算式，减轻了一些运行时的负担
-在对此类常量进行定义时，必须对其进行赋值
-一个static又是final的域只占据一段不能改变的存储空间
-static和fi">
+<meta name="twitter:title" content="Java并发基础">
+<meta name="twitter:description" content="Java并发基础1. 初始线程：线程的基本操作1.1 新建线程1.2 终止线程
+弃用了stop方法，因为stop方法过于暴力，强行把执行到一半的线程终止，释放锁，会引起数据不一致问题
+1.3 线程中断
+线程中断是一种重要的线程协作机制
+
+  public void Thread.interrupt()                //中断线程  public boolean Thread.isI">
 
 
 
@@ -145,13 +139,13 @@ static和fi">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/05/Final关键字&初始化及类的加载/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/04/04/并发基础/"/>
 
 
 
 
 
-  <title> Final关键字&初始化及类的加载 | 扯皮屋 </title>
+  <title> Java并发基础 | 扯皮屋 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -280,7 +274,7 @@ static和fi">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/05/Final关键字&初始化及类的加载/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/并发基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Logan">
@@ -301,7 +295,7 @@ static和fi">
             
             
               
-                Final关键字&初始化及类的加载
+                Java并发基础
               
             
           </h1>
@@ -316,8 +310,8 @@ static和fi">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-05T00:00:00+08:00">
-                2017-03-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-04T00:00:00+08:00">
+                2017-04-04
               </time>
             
 
@@ -352,35 +346,56 @@ static和fi">
       
 
       
-        <h1 id="Final关键字-amp-初始化及类的加载"><a href="#Final关键字-amp-初始化及类的加载" class="headerlink" title="Final关键字&amp;初始化及类的加载"></a>Final关键字&amp;初始化及类的加载</h1><blockquote>
-<p>无法改变</p>
-<h2 id="1-final数据"><a href="#1-final数据" class="headerlink" title="1.final数据"></a>1.final数据</h2><ol>
-<li>对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象</li>
-<li>可以在编译时执行计算式，减轻了一些运行时的负担</li>
-<li>在对此类常量进行定义时，必须对其进行赋值</li>
-<li>一个static又是final的域只占据一段不能改变的存储空间</li>
-<li>static和final修饰的用大写表示，下划线分隔各个单词</li>
-<li>不能因为数据是final就认为在编译时可以知道他的值（可以在运行时生成）</li>
-<li>编译器都确保空白final在使用前必须被初始化，必须在域的定义出或在每个构造器中用表达式对final进行赋值。</li>
-</ol>
+        <h1 id="Java并发基础"><a href="#Java并发基础" class="headerlink" title="Java并发基础"></a>Java并发基础</h1><h2 id="1-初始线程：线程的基本操作"><a href="#1-初始线程：线程的基本操作" class="headerlink" title="1. 初始线程：线程的基本操作"></a>1. 初始线程：线程的基本操作</h2><h3 id="1-1-新建线程"><a href="#1-1-新建线程" class="headerlink" title="1.1 新建线程"></a>1.1 新建线程</h3><h3 id="1-2-终止线程"><a href="#1-2-终止线程" class="headerlink" title="1.2 终止线程"></a>1.2 终止线程</h3><ul>
+<li><p>弃用了stop方法，因为stop方法过于暴力，强行把执行到一半的线程终止，释放锁，会引起数据不一致问题</p>
+<h3 id="1-3-线程中断"><a href="#1-3-线程中断" class="headerlink" title="1.3 线程中断"></a>1.3 线程中断</h3><blockquote>
+<p>线程中断是一种重要的线程协作机制</p>
 </blockquote>
-<h2 id="2-final方法"><a href="#2-final方法" class="headerlink" title="2.final方法"></a>2.final方法</h2><ol>
-<li>把方法锁定，以防止任何继承类修改他的含义</li>
-<li>提高效率，能使方法的所有调用转为内嵌调用</li>
-</ol>
-<h2 id="3-final类"><a href="#3-final类" class="headerlink" title="3.final类"></a>3.final类</h2><ol>
-<li>将某个类的整体定义为final时，表明了不能继承该类，其中的方法也都隐式指定为final的</li>
-</ol>
-<h2 id="4-初始化及类的加载"><a href="#4-初始化及类的加载" class="headerlink" title="4.初始化及类的加载"></a>4.初始化及类的加载</h2><blockquote>
-<p>类的代码在初次使用时加载（创建对象以及访问static域）</p>
+<p>  public void Thread.interrupt()                //中断线程<br>  public boolean Thread.isInterrupted()        //判断是否被中断<br>  public static boolean Thread.interrupted()    //判断是否被中断并清除当前中断状态</p>
+</li>
+<li><p>线程中断并不会使线程立即退出，而是给线程发送一个通知，告知目标线程需要退出</p>
+</li>
+<li>处于wait()或者sleep()中则需要通过中断来识别</li>
+<li>Thread.sleep()方法由于中断而抛出异常，而且会清除中断标记，如果不加处理，则在下一次循环开始时，就无法捕获这个中断，所以在异常处理中，在此设置中断标记位</li>
+</ul>
+<h3 id="1-4-等待（wait）和通知（notify）"><a href="#1-4-等待（wait）和通知（notify）" class="headerlink" title="1.4 等待（wait）和通知（notify）"></a>1.4 等待（wait）和通知（notify）</h3><blockquote>
+<p>这两个方法并不是在Thread类中的，而是在Object类中</p>
 </blockquote>
-<ol>
-<li>根基类的static初始化，然后是子类，以此类推。因为子类中的static初始化可能会依赖于父类的成员能否正确初始化</li>
-<li>类加载完毕后，对象中的基本类型都会被设为默认值，对象引用设为null</li>
-<li>调用基类的构造器，然后是子类的构造器</li>
-<li>构造器完成之后，实例变量按次序被初始化</li>
-<li>其余部分被执行</li>
-</ol>
+<ul>
+<li>wait()方法或释放目标对象的锁，Thread.sleep()则不会</li>
+</ul>
+<h3 id="1-5-挂起-suspend-和继续执行-resume-线程"><a href="#1-5-挂起-suspend-和继续执行-resume-线程" class="headerlink" title="1.5 挂起(suspend)和继续执行(resume)线程"></a>1.5 挂起(suspend)和继续执行(resume)线程</h3><blockquote>
+<p>被废弃</p>
+</blockquote>
+<ul>
+<li>suspend()在导致线程暂停的同时，并不会去释放任何锁资源</li>
+<li>如果resume()操作意外地在suspend()前执行，则被挂起的线程很难再有机会被继续执行，其他线程也将不会获得该锁</li>
+<li>被挂起的线程，从状态上看仍然是Runnable‘</li>
+</ul>
+<h3 id="1-6-等待线程结束-join-和谦让-yield"><a href="#1-6-等待线程结束-join-和谦让-yield" class="headerlink" title="1.6 等待线程结束(join)和谦让(yield)"></a>1.6 等待线程结束(join)和谦让(yield)</h3><ul>
+<li>join:阻塞当前线程，直到目标线程执行完毕</li>
+<li>yield:是当前线程让出CPU</li>
+</ul>
+<h2 id="2-volatile和Java内存模型-JMM）"><a href="#2-volatile和Java内存模型-JMM）" class="headerlink" title="2. volatile和Java内存模型(JMM）"></a>2. volatile和Java内存模型(JMM）</h2><p>volatile无法保证复合操作的原子性，但是可保证数据的可见性和有序性</p>
+<h2 id="3-分门别类的管理：线程组"><a href="#3-分门别类的管理：线程组" class="headerlink" title="3. 分门别类的管理：线程组"></a>3. 分门别类的管理：线程组</h2><pre><code>//新建一个名为“PrintGroup”的线程组
+ThreadGroup tg = new ThreadGroup(&quot;PrintGroup&quot;);
+//ThreadGroupName()实现了Runnable接口
+//将线程T1,T2加入线程组
+Thread t1 = new Thread(tg,new ThreadGroupName(),&quot;T1&quot;);
+Thread t2 = new Thread(tg,new ThreadGroupName(),&quot;T2&quot;);
+</code></pre><ul>
+<li>activeCount()可获得活动线程的总数，估计值</li>
+<li>list()可以打印这个线程组中所有线程的信息</li>
+</ul>
+<h2 id="4-驻守后台：守护线程-Daemon"><a href="#4-驻守后台：守护线程-Daemon" class="headerlink" title="4.驻守后台：守护线程(Daemon)"></a>4.驻守后台：守护线程(Daemon)</h2><blockquote>
+<p>守护线程要守护的对象不存在，则守护线程也会自然退出</p>
+</blockquote>
+<ul>
+<li>设置守护线程必须在线程start()之前设置</li>
+</ul>
+<h2 id="5-线程优先级"><a href="#5-线程优先级" class="headerlink" title="5.线程优先级"></a>5.线程优先级</h2><blockquote>
+<p>优先级高的线程在竞争资源时更有优势</p>
+<h2 id="6-ArrayList和HashMap都是线程不安全的"><a href="#6-ArrayList和HashMap都是线程不安全的" class="headerlink" title="6. ArrayList和HashMap都是线程不安全的"></a>6. ArrayList和HashMap都是线程不安全的</h2></blockquote>
 
       
     </div>
@@ -410,7 +425,7 @@ static和fi">
       
         <div class="post-tags">
           
-            <a href="/tags/JAVA/" rel="tag"># JAVA</a>
+            <a href="/tags/并发编程/" rel="tag"># 并发编程</a>
           
         </div>
       
@@ -423,8 +438,8 @@ static和fi">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/02/Java内存区域与内存溢出异常/" rel="next" title="Java内存区域与内存溢出异常">
-                <i class="fa fa-chevron-left"></i> Java内存区域与内存溢出异常
+              <a href="/2017/04/04/初入并发/" rel="next" title="初入并发">
+                <i class="fa fa-chevron-left"></i> 初入并发
               </a>
             
           </div>
@@ -432,10 +447,6 @@ static和fi">
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/05/垃圾收集器与内存分配策略/" rel="prev" title="垃圾收集器与内存分配策略">
-                垃圾收集器与内存分配策略 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -575,7 +586,7 @@ static和fi">
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Final关键字-amp-初始化及类的加载"><span class="nav-number">1.</span> <span class="nav-text">Final关键字&初始化及类的加载</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-final数据"><span class="nav-number">1.1.</span> <span class="nav-text">1.final数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-final方法"><span class="nav-number">1.2.</span> <span class="nav-text">2.final方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-final类"><span class="nav-number">1.3.</span> <span class="nav-text">3.final类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-初始化及类的加载"><span class="nav-number">1.4.</span> <span class="nav-text">4.初始化及类的加载</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java并发基础"><span class="nav-number">1.</span> <span class="nav-text">Java并发基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-初始线程：线程的基本操作"><span class="nav-number">1.1.</span> <span class="nav-text">1. 初始线程：线程的基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-新建线程"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 新建线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-终止线程"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 终止线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-线程中断"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 线程中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-等待（wait）和通知（notify）"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 等待（wait）和通知（notify）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-挂起-suspend-和继续执行-resume-线程"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 挂起(suspend)和继续执行(resume)线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-等待线程结束-join-和谦让-yield"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 等待线程结束(join)和谦让(yield)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-volatile和Java内存模型-JMM）"><span class="nav-number">1.2.</span> <span class="nav-text">2. volatile和Java内存模型(JMM）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-分门别类的管理：线程组"><span class="nav-number">1.3.</span> <span class="nav-text">3. 分门别类的管理：线程组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-驻守后台：守护线程-Daemon"><span class="nav-number">1.4.</span> <span class="nav-text">4.驻守后台：守护线程(Daemon)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-线程优先级"><span class="nav-number">1.5.</span> <span class="nav-text">5.线程优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-ArrayList和HashMap都是线程不安全的"><span class="nav-number">1.6.</span> <span class="nav-text">6. ArrayList和HashMap都是线程不安全的</span></a></li></ol></li></ol></div>
             
 
           </div>
