@@ -1,0 +1,883 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="并发编程," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="JDK并发包1.多线程的团队协作：同步控制1.1 synchronized的功能扩展：重入锁
+可以连续多次获得同一把锁，而不会导致死锁
+
+public static ReentrantLock = new ReentrantLock();
+lock.lock();
+lock.unlock();
+
+中断响应:使用lockInterruptibly()方法，可对中断进行响应的锁申请动作
+锁申请等待限时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDK并发包">
+<meta property="og:url" content="http://yoursite.com/2017/04/16/JDK并发包/index.html">
+<meta property="og:site_name" content="扯皮屋">
+<meta property="og:description" content="JDK并发包1.多线程的团队协作：同步控制1.1 synchronized的功能扩展：重入锁
+可以连续多次获得同一把锁，而不会导致死锁
+
+public static ReentrantLock = new ReentrantLock();
+lock.lock();
+lock.unlock();
+
+中断响应:使用lockInterruptibly()方法，可对中断进行响应的锁申请动作
+锁申请等待限时">
+<meta property="og:updated_time" content="2017-04-16T09:37:34.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JDK并发包">
+<meta name="twitter:description" content="JDK并发包1.多线程的团队协作：同步控制1.1 synchronized的功能扩展：重入锁
+可以连续多次获得同一把锁，而不会导致死锁
+
+public static ReentrantLock = new ReentrantLock();
+lock.lock();
+lock.unlock();
+
+中断响应:使用lockInterruptibly()方法，可对中断进行响应的锁申请动作
+锁申请等待限时">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/16/JDK并发包/"/>
+
+
+
+
+
+  <title> JDK并发包 | 扯皮屋 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">扯皮屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">守正笃实，久久为攻</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/16/JDK并发包/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Logan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logan.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扯皮屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JDK并发包
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-16T00:00:00+08:00">
+                2017-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JDK并发包"><a href="#JDK并发包" class="headerlink" title="JDK并发包"></a>JDK并发包</h1><h2 id="1-多线程的团队协作：同步控制"><a href="#1-多线程的团队协作：同步控制" class="headerlink" title="1.多线程的团队协作：同步控制"></a>1.多线程的团队协作：同步控制</h2><h3 id="1-1-synchronized的功能扩展：重入锁"><a href="#1-1-synchronized的功能扩展：重入锁" class="headerlink" title="1.1 synchronized的功能扩展：重入锁"></a>1.1 synchronized的功能扩展：重入锁</h3><blockquote>
+<p>可以连续多次获得同一把锁，而不会导致死锁</p>
+</blockquote>
+<pre><code>public static ReentrantLock = new ReentrantLock();
+lock.lock();
+lock.unlock();
+</code></pre><ol>
+<li><strong>中断响应</strong>:使用lockInterruptibly()方法，可对中断进行响应的锁申请动作</li>
+<li><p><strong>锁申请等待限时</strong>：tryLock()方法可进行一次限时的等待</p>
+<ol>
+<li>tryLock()接受两个参数，一个表示等待时长，另外一个表示计时单位</li>
+<li>tryLock()方法也可以不带参数直接运行，成功则返回true，失败则返回false</li>
+</ol>
+</li>
+<li><p><strong>公平锁</strong>：不会产生饥饿现象</p>
+<ul>
+<li>公平锁的构造函数 <code>public ReentrantLock(boolean fair)</code>  </li>
+</ul>
+</li>
+</ol>
+<h3 id="1-2-重入锁的好搭档：Condition条件"><a href="#1-2-重入锁的好搭档：Condition条件" class="headerlink" title="1.2 重入锁的好搭档：Condition条件"></a>1.2 重入锁的好搭档：Condition条件</h3><pre><code>//通过Lock接口获得一个与当前重入锁绑定的Condition实例    
+Condition condition = lock.newCondition();
+
+//Condition接口提供的基本方法
+void await() throws InterruptedException;//被中断时能跳出等待
+void awaitUninterruptibly();    //不会相应中断
+long awaitNanos(long nanosTimeout) throws InterruptedException;
+boolean await(long time,TimeUnit unit) throws InterruptedException;
+boolean awaitUntil(Date deadline) throws InterruptedException;
+void signal();
+void signalAll();
+</code></pre><h3 id="1-3-允许多个线程同时访问：信号量"><a href="#1-3-允许多个线程同时访问：信号量" class="headerlink" title="1.3 允许多个线程同时访问：信号量"></a>1.3 允许多个线程同时访问：信号量</h3><blockquote>
+<p>可以指定多个线程同时访问某一个资源</p>
+</blockquote>
+<pre><code>//构造函数如下
+public Semaphore(int permits)
+//第二个参数可以指定是否公平
+public Semaphore(int permits,boolean fair) 
+
+//主要方法
+//尝试获得一个准入许可，失败则会等待，直到有线程释放一个许可或者当前线程被中断
+public void acquire()
+//与上类似，但是不响应中断
+public void acquireUninterruptibly()
+//尝试获得许可，成功返回true，失败返回false，不进行等待
+public boolean tryAcquire()
+public boolean tryAcquire(long timeout,TimeUnit unit)
+//线程访问资源结束后释放一个许可
+public void release()    
+</code></pre><h3 id="1-4-ReadWriteLock-读写锁"><a href="#1-4-ReadWriteLock-读写锁" class="headerlink" title="1.4 ReadWriteLock 读写锁"></a>1.4 ReadWriteLock 读写锁</h3><ul>
+<li>读-读不互斥：读读之间不阻塞</li>
+<li>读-写互斥：读阻塞写，写阻塞读</li>
+<li><p>写写互斥：写写阻塞</p>
+<pre><code>ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+Lock readLock = readWriteLock.readLock();
+Lock writeLock = readWriteLock.writeLock();
+</code></pre></li>
+</ul>
+<h3 id="1-5-倒计时器：CountDownLatch"><a href="#1-5-倒计时器：CountDownLatch" class="headerlink" title="1.5 倒计时器：CountDownLatch"></a>1.5 倒计时器：CountDownLatch</h3><blockquote>
+<p>CountDownLatch是一个非常实用的多线程控制工具类</p>
+</blockquote>
+<pre><code>//构造函数，count为计数器的计数个数
+public CountDownLatch(int count)   
+
+public class CountDownLatchDemo implements Runnable{
+    static final CountDownLatch end = new CountDownLatch(10);
+    static final CountDownLatchDemo demo = new CountDownLatchDemo();
+
+    public void run(){
+        try{
+            //模拟检查任务
+            Thread.sleep(new Random().nextInt(10)*1000);
+            System.out.println(&quot;check complete&quot;);
+            //通知CountDownLatch一个线程完成了任务
+            end.countDown();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    //主线程在CountDownLatch上等待，当所有检查任务全部完成后，主线程方能继续执行
+    public static void main(String[] args)throws InterruptedException{
+        ExecutorService exec = Executors.newFixedThreadPool(10);
+        for(int i=0;i&lt;10;i++){
+            exec.submit(demo);
+        }
+        //要求主线程等待所有10个检查任务（线程）全部完成
+        end.await();
+        System.out.println(&quot;Fire!&quot;);
+        exec.shutdown();
+    }
+}
+</code></pre><h3 id="1-6-循环栅栏：CyclicBarrier"><a href="#1-6-循环栅栏：CyclicBarrier" class="headerlink" title="1.6 循环栅栏：CyclicBarrier"></a>1.6 循环栅栏：CyclicBarrier</h3><blockquote>
+<p>CountDownLatch是另外一个多线程控制工具类</p>
+</blockquote>
+<pre><code>//parties表示计数总数，也就是参与的线程总数
+//barrierAction表示完成一次计数后要执行的动作
+CyclicBarrier(int parties,Runnable barrierAction)
+
+CyclicBarrier.await()    //进行等待直到所有的线程完成动作
+                        //会抛出两个异常：InterruptedException和CyclicBarrierException(代表CyclicBarrier已经损坏，无法继续等待)
+</code></pre><h3 id="1-7-线程阻塞工具类：LockSupport"><a href="#1-7-线程阻塞工具类：LockSupport" class="headerlink" title="1.7 线程阻塞工具类：LockSupport"></a>1.7 线程阻塞工具类：LockSupport</h3><blockquote>
+<p>可以在线程内任意位置让线程阻塞</p>
+</blockquote>
+<pre><code>park();
+unpark();
+</code></pre><ul>
+<li>不需要事先获得某个对象的锁，也不会抛出InterruptedException异常</li>
+<li>LockSupport使用了类似信号量的机制，为每一个线程准备了一个许可，许可可用则park()立即返回，否则阻塞</li>
+<li>处于park()挂起状态的线程不会像suspend那样给出一个Runnable的状态</li>
+<li>LockSupport.park()还支持中断影响，不会抛出InterruptedException异常。默认的返回并且可以从Thread.interrupted()方法中获得中断标记</li>
+</ul>
+<h2 id="2-线程复用：线程池"><a href="#2-线程复用：线程池" class="headerlink" title="2.线程复用：线程池"></a>2.线程复用：线程池</h2><p>Executor框架提供了各类线程池</p>
+<pre><code>//返回一个固定数量的线程池
+public static ExecutorService newFixedThreadPool(int nThreads)
+//返回一个只有一个线程的线程池
+public static ExecutorService newSingleThreadExecutor()
+//返回一个可根据实际情况调整的线程池
+public static ExecutorService newCachedThreadPool()
+//返回ScheduledExecutorService对象，线程池大小为1，拥有在给定时间执行某认为的功能
+public static ScheduledExecutorService newSingleThreadScheduledExecutor()
+//同上，但是可以指定线程池数量
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)
+</code></pre><ul>
+<li><code>ScheduledExecutorService</code>类的三个方法</li>
+</ul>
+<pre><code>//会在给定时间，对任务进行一次调度
+schedule(Runnable command,long delay,TimeUnit unit);
+//周期调度，周期是从方法开始时算起
+scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit);
+//周期调度，周期是从上一个方法结束时算起
+scheduleWithFixedDelay(Runnable command,long initialDelay,long delay,TimeUnit unit);
+</code></pre><ul>
+<li><p>各类线程池其实都是对<code>ThreadPoolExecutor</code>的封装</p>
+<pre><code>public ThreadPoolExecutor(int corePoolSize,
+                        int maximumPoolSize,
+                        long keepAliveTime,
+                        TimeUnit unit,
+                        BlockingQueue&lt;Runnable&gt;workQueue,
+                        ThreadFactory threadFactory,
+                        RejectedExecutionHandler handler)
+</code></pre></li>
+</ul>
+<ul>
+<li><p><code>ThreadPoolExecutor</code>的任务调度逻辑</p>
+<ul>
+<li>任务提交</li>
+<li>是否小于corePoolSize，小于则分配线程执行任务</li>
+<li>大于则提交到等待队列</li>
+<li>提交成功则等待执行，提交失败（队列已满）则提交到线程池</li>
+<li>若当前线程数小于maximumPoolSize则分配线程执行，否则拒绝执行</li>
+</ul>
+</li>
+<li><p><strong>拒绝策略</strong>：JDK内置四种拒绝策略</p>
+<ul>
+<li>AbortPolicy策略：直接抛出异常，阻止系统正常工作</li>
+<li>CallerRunsPolicy策略：只要线程池未关闭，该策略直接在调用者线程中完成被丢弃的任务。</li>
+<li>DiscardOledestPolicy策略：该策略丢弃最老的一个请求，也就是即将被执行的一个任务，并尝试再次提交当前任务</li>
+<li>DiscardPolicy策略：对当前任务不予处理</li>
+<li><p>可以自己扩展RejectedExecutionHandler接口</p>
+<pre><code>public interface RejectedExecutionHandler{
+    void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
+}
+</code></pre></li>
+</ul>
+</li>
+<li><p>自定义线程创建：ThreadFactory是一个接口，只有一个方法：<code>Thread newThread(Runnable r);</code></p>
+</li>
+<li>扩展线程池：创建ThreadPoolExecutor实例时，可以实现beforeExecute()、afterExecute()、terminiated()三个方法</li>
+<li>打印堆栈：1、放弃submit(),使用execute() 2、扩展线程池，包装runnable</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/并发编程/" rel="tag"># 并发编程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/04/初入并发/" rel="next" title="初入并发">
+                <i class="fa fa-chevron-left"></i> 初入并发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logan.jpg"
+               alt="Logan" />
+          <p class="site-author-name" itemprop="name">Logan</p>
+           
+              <p class="site-description motion-element" itemprop="description">胡编一通，乱写一气</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/LoLogan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2469700510?refer_flag=1001030201_" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JDK并发包"><span class="nav-number">1.</span> <span class="nav-text">JDK并发包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-多线程的团队协作：同步控制"><span class="nav-number">1.1.</span> <span class="nav-text">1.多线程的团队协作：同步控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-synchronized的功能扩展：重入锁"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 synchronized的功能扩展：重入锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-重入锁的好搭档：Condition条件"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 重入锁的好搭档：Condition条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-允许多个线程同时访问：信号量"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 允许多个线程同时访问：信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-ReadWriteLock-读写锁"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 ReadWriteLock 读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-倒计时器：CountDownLatch"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 倒计时器：CountDownLatch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-循环栅栏：CyclicBarrier"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 循环栅栏：CyclicBarrier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-线程阻塞工具类：LockSupport"><span class="nav-number">1.1.7.</span> <span class="nav-text">1.7 线程阻塞工具类：LockSupport</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-线程复用：线程池"><span class="nav-number">1.2.</span> <span class="nav-text">2.线程复用：线程池</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Logan</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
