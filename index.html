@@ -348,7 +348,7 @@ lock.unlock();
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/04/16/JDK并发包/#more" rel="contents">
+            <a class="btn" href="/2017/04/16/JDK并发包/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -394,7 +394,7 @@ lock.unlock();
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/初入并发/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/16/锁的优化及注意事项/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Logan">
@@ -416,8 +416,8 @@ lock.unlock();
             
               
                 
-                <a class="post-title-link" href="/2017/04/04/初入并发/" itemprop="url">
-                  初入并发
+                <a class="post-title-link" href="/2017/04/16/锁的优化及注意事项/" itemprop="url">
+                  锁的优化及注意事项
                 </a>
               
             
@@ -433,8 +433,8 @@ lock.unlock();
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-04T00:00:00+08:00">
-                2017-04-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-16T00:00:00+08:00">
+                2017-04-16
               </time>
             
 
@@ -471,16 +471,15 @@ lock.unlock();
       
         
           
-          初入并发1. 为何要实现并发摩尔定律失效
-　摩尔定律：集成电路上可容纳的电晶体数目，约每隔24月便会增加一倍，即预计18个月会将芯片的性能提高一倍 
-
-
-摩尔定律并不是一种自然法则或者物理定律，他只是基于人为观察后对未来进行的预测
-失效的原因：因为目前的制造工艺已经到了纳米，而硅电路无法在物质分子层
+          锁的优化及注意事项1. 提高锁性能的几点建议
+减少锁持有时间：减少锁的持有时间有助于降低锁冲突的可能性，进而提升系统的并发能力
+减小锁粒度：即缩小锁定对象的范围，从而减少锁冲突的可能性，进而提升系统的并发能力
+读写分离锁来替换独占锁：读多写少的场合中使用读写锁可以有效提升系统的并发能力
+锁分离：根据
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/04/04/初入并发/#more" rel="contents">
+            <a class="btn" href="/2017/04/16/锁的优化及注意事项/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -612,7 +611,139 @@ lock.unlock();
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/04/04/并发基础/#more" rel="contents">
+            <a class="btn" href="/2017/04/04/并发基础/#далее" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/初入并发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Logan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logan.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扯皮屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/04/初入并发/" itemprop="url">
+                  初入并发
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-04T00:00:00+08:00">
+                2017-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          初入并发1. 为何要实现并发摩尔定律失效
+　摩尔定律：集成电路上可容纳的电晶体数目，约每隔24月便会增加一倍，即预计18个月会将芯片的性能提高一倍 
+
+
+摩尔定律并不是一种自然法则或者物理定律，他只是基于人为观察后对未来进行的预测
+失效的原因：因为目前的制造工艺已经到了纳米，而硅电路无法在物质分子层
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/04/04/初入并发/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -743,138 +874,7 @@ lock.unlock();
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/03/21/线程安全与锁优化/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/20/Java内存模型与线程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Logan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/logan.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="扯皮屋">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/20/Java内存模型与线程/" itemprop="url">
-                  Java内存模型与线程
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-20T00:00:00+08:00">
-                2017-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          Java内存模型与线程1. 硬件的效率与一致性
-
-大多数的运算任务都不可能只靠处理器“计算”就能完成，处理器至少要与内存交互，如读取运算数据、存储结果等
-基于高速缓存的存储交互很好的解决了处理器和内存的速度矛盾，但是也为计算机系统带来了更高的复杂度，因为引入了一个新问题：缓存一致性。
-在多处理器系统
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/20/Java内存模型与线程/#more" rel="contents">
+            <a class="btn" href="/2017/03/21/线程安全与锁优化/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -915,7 +915,7 @@ lock.unlock();
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -960,7 +960,7 @@ lock.unlock();
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -1,0 +1,797 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="并发编程," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="锁的优化及注意事项1. 提高锁性能的几点建议
+减少锁持有时间：减少锁的持有时间有助于降低锁冲突的可能性，进而提升系统的并发能力
+减小锁粒度：即缩小锁定对象的范围，从而减少锁冲突的可能性，进而提升系统的并发能力
+读写分离锁来替换独占锁：读多写少的场合中使用读写锁可以有效提升系统的并发能力
+锁分离：根据功能的不同进行有效的锁分离
+锁粗化：如果对一个锁不停地进行请求、同步和释放，便会把所有的锁操作整合成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="锁的优化及注意事项">
+<meta property="og:url" content="http://yoursite.com/2017/04/16/锁的优化及注意事项/index.html">
+<meta property="og:site_name" content="扯皮屋">
+<meta property="og:description" content="锁的优化及注意事项1. 提高锁性能的几点建议
+减少锁持有时间：减少锁的持有时间有助于降低锁冲突的可能性，进而提升系统的并发能力
+减小锁粒度：即缩小锁定对象的范围，从而减少锁冲突的可能性，进而提升系统的并发能力
+读写分离锁来替换独占锁：读多写少的场合中使用读写锁可以有效提升系统的并发能力
+锁分离：根据功能的不同进行有效的锁分离
+锁粗化：如果对一个锁不停地进行请求、同步和释放，便会把所有的锁操作整合成">
+<meta property="og:updated_time" content="2017-04-18T13:16:16.759Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="锁的优化及注意事项">
+<meta name="twitter:description" content="锁的优化及注意事项1. 提高锁性能的几点建议
+减少锁持有时间：减少锁的持有时间有助于降低锁冲突的可能性，进而提升系统的并发能力
+减小锁粒度：即缩小锁定对象的范围，从而减少锁冲突的可能性，进而提升系统的并发能力
+读写分离锁来替换独占锁：读多写少的场合中使用读写锁可以有效提升系统的并发能力
+锁分离：根据功能的不同进行有效的锁分离
+锁粗化：如果对一个锁不停地进行请求、同步和释放，便会把所有的锁操作整合成">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/16/锁的优化及注意事项/"/>
+
+
+
+
+
+  <title> 锁的优化及注意事项 | 扯皮屋 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">扯皮屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">守正笃实，久久为攻</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/16/锁的优化及注意事项/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Logan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logan.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扯皮屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                锁的优化及注意事项
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-16T00:00:00+08:00">
+                2017-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="锁的优化及注意事项"><a href="#锁的优化及注意事项" class="headerlink" title="锁的优化及注意事项"></a>锁的优化及注意事项</h1><h2 id="1-提高锁性能的几点建议"><a href="#1-提高锁性能的几点建议" class="headerlink" title="1. 提高锁性能的几点建议"></a>1. 提高锁性能的几点建议</h2><ul>
+<li>减少锁持有时间：减少锁的持有时间有助于降低锁冲突的可能性，进而提升系统的并发能力</li>
+<li>减小锁粒度：即缩小锁定对象的范围，从而减少锁冲突的可能性，进而提升系统的并发能力</li>
+<li>读写分离锁来替换独占锁：读多写少的场合中使用读写锁可以有效提升系统的并发能力</li>
+<li>锁分离：根据功能的不同进行有效的锁分离</li>
+<li>锁粗化：如果对一个锁不停地进行请求、同步和释放，便会把所有的锁操作整合成对锁的一次请求，从而减少对锁的请求同步数</li>
+</ul>
+<h2 id="2-Java虚拟机对锁的优化"><a href="#2-Java虚拟机对锁的优化" class="headerlink" title="2. Java虚拟机对锁的优化"></a>2. Java虚拟机对锁的优化</h2><ul>
+<li>锁偏向：如果一个线程获得了锁，那么锁就进入偏向模式，当这个线程再次请求锁时，无须再做任何同步操作</li>
+<li>轻量级锁：将对象头部作为指针，指向持有锁的线程堆栈的内部，来判断一个线程是否持有对象锁</li>
+<li>自旋锁：虚拟机会让当前线程做几个空循环，若干次循环后，如果可以得到锁，则顺利进入临界区，否则正式地将线程在操作系统层面挂起</li>
+<li>锁消除：虚拟机在JIT编译时，通过对运行上下文的扫描，去除不可能存在共享资源竞争的锁。</li>
+</ul>
+<h2 id="3-ThreadLocal"><a href="#3-ThreadLocal" class="headerlink" title="3. ThreadLocal"></a>3. ThreadLocal</h2><blockquote>
+<p>线程的局部变量，只有当前线程可以访问</p>
+</blockquote>
+<h3 id="3-1-简单实用"><a href="#3-1-简单实用" class="headerlink" title="3.1 简单实用"></a>3.1 简单实用</h3><pre><code>ThreadLocal&lt;T&gt; t = new ThreadLocal&lt;T&gt;();
+t.get();
+t.set();
+</code></pre><h3 id="3-2-ThreadLocal的实现原理"><a href="#3-2-ThreadLocal的实现原理" class="headerlink" title="3.2 ThreadLocal的实现原理"></a>3.2 ThreadLocal的实现原理</h3><ul>
+<li><p>ThreadLocal的set()方法和get()方法</p>
+<pre><code>//ThreadLocalMap是定义在Thread内部的成员
+public void set(T value){
+    Thread t = Thread.currentThread();
+    ThreadLocalMap map = getMap(t);
+    if(map!=null)
+        map.set(this,value);
+    else
+        creatMap(t,value);
+}
+
+public T get(){
+    Thread t = Thread.currentThread();
+    ThreadLocalMap map = getMap(t);
+    if(map != null){
+        ThreadLocalMap.Entry e = map.getEntry(this);
+        if(e!=null)
+            return (T)e.value;
+    }
+    return setInitialValue();
+}
+</code></pre></li>
+<li>当线程退出时，Thread类会进行一些清理工作，其中就包括ThreadLocalMap，但是如果实用线程池，就意味着当前线程未必会退出，所以可能会导致内存泄漏，因此如果希望及时回收对象，最好使用<code>ThreadLocal.remove()</code>方法将这个变量移除</li>
+<li>还可以写出类似 <code>obj = null</code> 之类的代码加速回收</li>
+<li>ThreadLocalMap的实现使用了弱引用，当ThreadLocal的外部强引用被会收拾，ThreadLocalMap的key就会变成null从而进行垃圾回收</li>
+</ul>
+<h2 id="4-无锁"><a href="#4-无锁" class="headerlink" title="4. 无锁"></a>4. 无锁</h2><blockquote>
+<p>锁时一种悲观的策略，无锁是一种乐观的策略</p>
+</blockquote>
+<h3 id="4-1-比较交换-CAS"><a href="#4-1-比较交换-CAS" class="headerlink" title="4.1 比较交换(CAS)"></a>4.1 比较交换(CAS)</h3><ul>
+<li>CAS算法： 它包含三个参数CAS(V,E,N)。V表示要更新的变量，E表示预期值，N表示新值。仅当V值等于E值是，才会将V值设为N，如果V值和E值不同，则说明已经有其他线程做了更新，则当前线程什么都不做。最后，CAS返回当前V的真实值</li>
+</ul>
+<h3 id="4-2-无锁的线程安全整数：AtomicInteger"><a href="#4-2-无锁的线程安全整数：AtomicInteger" class="headerlink" title="4.2 无锁的线程安全整数：AtomicInteger"></a>4.2 无锁的线程安全整数：AtomicInteger</h3><blockquote>
+<p>JDK并发包中有一个atomic包，里面实现了一些直接使用CAS操作的线程安全的类型</p>
+</blockquote>
+<ul>
+<li><p>AtomicInteger是可变的而且是线程安全的，对其进行写该等任何操作都是用CAS指令进行的</p>
+<pre><code>public final int get()                                //取得当前值
+public final void set(int newValue)                    //设置当前值
+public final int getAndSet(int newValue)            //设置新值，并返回旧值
+public final boolean compareAndSet(int expect,int u)//如果当前值为expect，则设置为u
+public final int getAndIncrement()                    //当前值加1，返回旧值
+public final int getAndDecrement()                    //当前值减1，返回旧值
+public final int getAndAdd(int delta)                //当前值增加delta，返回旧值
+public final int incrementAndGet()                    //当前值加1，返回新值
+public final int decrementAndGet()                    //当前值减1，返回新值
+public final int addAndGet(int delta)                  //当前值增加delta，返回新值
+</code></pre></li>
+</ul>
+<h3 id="4-3-Java中的指针：Unsafe类"><a href="#4-3-Java中的指针：Unsafe类" class="headerlink" title="4.3 Java中的指针：Unsafe类"></a>4.3 Java中的指针：Unsafe类</h3><h3 id="4-4-无锁的对象引用：AtomicReference"><a href="#4-4-无锁的对象引用：AtomicReference" class="headerlink" title="4.4 无锁的对象引用：AtomicReference"></a>4.4 无锁的对象引用：AtomicReference</h3><ul>
+<li>可能存在ABA问题：即在验证旧值的时候已经被其他线程修改了两次，对象的值又恢复为旧值</li>
+</ul>
+<h3 id="4-5-带有时间戳的对象引用：AtomicStampedReference"><a href="#4-5-带有时间戳的对象引用：AtomicStampedReference" class="headerlink" title="4.5 带有时间戳的对象引用：AtomicStampedReference"></a>4.5 带有时间戳的对象引用：AtomicStampedReference</h3><ul>
+<li>AtomicStampedReference内部不仅维护了对象值，还维护了一个时间戳，表示状态</li>
+</ul>
+<h3 id="4-6-数组也能无锁：AtomicIntegerArray"><a href="#4-6-数组也能无锁：AtomicIntegerArray" class="headerlink" title="4.6 数组也能无锁：AtomicIntegerArray"></a>4.6 数组也能无锁：AtomicIntegerArray</h3><ul>
+<li>处理提供基本数据类型外，JDK还为我们准备了数组等复合结构，如：AtomicIntegerArray、AtomicLongArray和AtomicReferenceArray</li>
+</ul>
+<h3 id="4-7-让普通变量也享受原子操作：AtomicIntegerFieldUpdate"><a href="#4-7-让普通变量也享受原子操作：AtomicIntegerFieldUpdate" class="headerlink" title="4.7 让普通变量也享受原子操作：AtomicIntegerFieldUpdate"></a>4.7 让普通变量也享受原子操作：AtomicIntegerFieldUpdate</h3><blockquote>
+<p>可对系统的关键数据进行现场安全的保护</p>
+</blockquote>
+<ul>
+<li>注意事项<ol>
+<li>Updater只能修改它可见范围的变量</li>
+<li>为了确保变量的正确读取，它必须是volatile类型的</li>
+<li>不支持static字段 </li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/并发编程/" rel="tag"># 并发编程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/04/并发基础/" rel="next" title="Java并发基础">
+                <i class="fa fa-chevron-left"></i> Java并发基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/16/JDK并发包/" rel="prev" title="JDK并发包">
+                JDK并发包 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logan.jpg"
+               alt="Logan" />
+          <p class="site-author-name" itemprop="name">Logan</p>
+           
+              <p class="site-description motion-element" itemprop="description">胡编一通，乱写一气</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/LoLogan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2469700510?refer_flag=1001030201_" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#锁的优化及注意事项"><span class="nav-number">1.</span> <span class="nav-text">锁的优化及注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-提高锁性能的几点建议"><span class="nav-number">1.1.</span> <span class="nav-text">1. 提高锁性能的几点建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Java虚拟机对锁的优化"><span class="nav-number">1.2.</span> <span class="nav-text">2. Java虚拟机对锁的优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ThreadLocal"><span class="nav-number">1.3.</span> <span class="nav-text">3. ThreadLocal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-简单实用"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 简单实用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ThreadLocal的实现原理"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 ThreadLocal的实现原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-无锁"><span class="nav-number">1.4.</span> <span class="nav-text">4. 无锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-比较交换-CAS"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 比较交换(CAS)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-无锁的线程安全整数：AtomicInteger"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 无锁的线程安全整数：AtomicInteger</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Java中的指针：Unsafe类"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 Java中的指针：Unsafe类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-无锁的对象引用：AtomicReference"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 无锁的对象引用：AtomicReference</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-带有时间戳的对象引用：AtomicStampedReference"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 带有时间戳的对象引用：AtomicStampedReference</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-数组也能无锁：AtomicIntegerArray"><span class="nav-number">1.4.6.</span> <span class="nav-text">4.6 数组也能无锁：AtomicIntegerArray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-让普通变量也享受原子操作：AtomicIntegerFieldUpdate"><span class="nav-number">1.4.7.</span> <span class="nav-text">4.7 让普通变量也享受原子操作：AtomicIntegerFieldUpdate</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Logan</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
